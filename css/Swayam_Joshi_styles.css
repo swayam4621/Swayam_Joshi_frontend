@@ -220,3 +220,34 @@ form div > label:first-child {
     margin-bottom: 10px;
 }
 
+footer {
+    text-align: center;
+    padding: 60px;
+    color: var(--text-incontact);
+    font-size: 0.85rem;
+}
+
+footer a {
+    color: var(--yellow-fontstuff);
+    text-decoration: none;
+}
+
+@media (max-width: 768px) {
+    /*used flex direction: column to stack links vertically if used on mobile devices*/
+    nav ul {
+        flex-direction: column;
+    }
+    
+    header h1 {
+        font-size: 2.2rem;
+    }
+    
+    section {
+        margin: 20px;
+        padding: 25px;
+    }
+
+    #skills ul ul {
+        grid-template-columns: 1fr;
+    }
+}
