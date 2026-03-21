@@ -96,3 +96,12 @@ allSubjects.forEach(sub => {
     });
     console.log(`Average ${sub} Score: ${subTotal / students.length}`);
 });
+
+//finding topper by comparing totalMarks 
+const topper = processedStudents.reduce((prev, current) => 
+    (prev.totalMarks > current.totalMarks) ? prev : current
+);
+
+console.log(`\nClass Topper: ${topper.name} with ${topper.totalMarks} marks`);
+
+
