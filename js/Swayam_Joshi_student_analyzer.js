@@ -54,3 +54,20 @@ function checkfailStudent(student) {
     
     return null; 
 }
+
+//apply the 85/70/50 grading 
+processedStudents.forEach(student => {
+    const failReason = checkFailStatus(student);
+    // fail status checked before checking grades
+    if (failReason) {
+        student.grade = failReason;
+    } else if (student.averageMarks >= 85) {
+        student.grade = "A";
+    } else if (student.averageMarks >= 70) {
+        student.grade = "B";
+    } else if (student.averageMarks >= 50) {
+        student.grade = "C";
+    } else {
+        student.grade = "Fail";
+    }
+});
