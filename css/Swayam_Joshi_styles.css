@@ -153,3 +153,47 @@ table tbody tr:nth-child(even) {
 table tr:hover {
     background-color: rgba(251, 191, 36, 0.05);
 }
+
+form div {
+    margin-bottom: 20px;
+}
+
+label {
+    /*display: block so it has a solid feel*/
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-incontact);
+    font-size: 0.9rem;
+}
+
+input, select, textarea {
+    width: 100%;
+    padding: 14px;
+    background-color: var(--page-basecolor);
+    border: 1px solid var(--dividing-lines);
+    color: white;
+    border-radius: 6px;
+    transition: border-color 0.3s;
+}
+
+input:focus, textarea:focus {
+    outline: none;
+    border-color: var(--yellow-fontstuff);
+}
+
+button[type="submit"] {
+    background-color: var(--yellow-fontstuff);
+    color: var(--page-basecolor);
+    padding: 14px 40px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer; /*cursor made a pointer*/
+    transition: 0.2s;
+}
+
+button[type="submit"]:hover {
+    /*hover for the amber button to make it interactive*/
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(251, 191, 36, 0.3);
+}
