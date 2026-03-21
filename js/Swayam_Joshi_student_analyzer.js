@@ -71,3 +71,18 @@ resStudents.forEach(student => {
         student.grade = "Fail";
     }
 });
+
+//iterating through subjects to find which student scored highest
+const allSubjects = ["Math", "English", "Science", "History", "Computer"];
+
+console.log("--- Subject-wise Highest Scores ---");
+allSubjects.forEach(sub => {
+    let highest = { name: "", score: -1 };
+    students.forEach(s => {
+        const subjectData = s.marks.find(m => m.subject === sub);
+        if (subjectData.score > highest.score) {
+            highest = { name: s.name, score: subjectData.score };
+        }
+    });
+    console.log(`Highest in ${sub}: ${highest.name} (${highest.score})`);
+});
