@@ -12,3 +12,43 @@
     padding: 0;
     box-sizing: border-box;
 }
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: var(--page-basecolor);
+    color: var(--white-fontforheadings);
+    line-height: 1.6;
+}
+
+
+header {  
+    text-align: center;
+    padding: 80px 20px;
+    background: linear-gradient(180deg, #111827 0%, var(--page-basecolor) 100%);
+}
+/* dark gradient for for the headers background which is page basecolor*/
+header h1 {
+    font-size: 3.5rem;
+    letter-spacing: -2px;
+    /*h1 having just white font color as it has the name*/
+}
+
+header h2 {
+    color: var(--yellow-fontstuff);
+    font-weight: 500;
+    margin-bottom: 25px;
+    /*professional title in yellow font with h2*/
+}
+
+header img {
+    /*circular profile img*/
+    border-radius: 50%;
+    border: 3px solid var(--yellow-fontstuff);
+    padding: 6px;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+header img:hover {
+    transform: scale(1.1);
+    /*adding hovering style to the profile picture*/
+}
