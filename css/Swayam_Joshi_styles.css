@@ -197,3 +197,26 @@ button[type="submit"]:hover {
     transform: translateY(-2px);
     box-shadow: 0 5px 15px rgba(251, 191, 36, 0.3);
 }
+
+input[type="radio"] {
+    width: auto;
+    display: inline-block;
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+/* to make the Male/Female text sit next to the radio dots */
+input[type="radio"] + label {
+    display: inline-block;
+    width: auto;
+    margin-right: 20px;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+/* for the gender main label specifically */
+form div > label:first-child {
+    display: block;
+    margin-bottom: 10px;
+}
+
