@@ -128,3 +128,28 @@ h2 {
     list-style: circle;
 }
 
+table {
+    width: 100%;
+    border: #020617;
+    border-collapse: collapse; /*border collapsed is used to get rid of double border look*/
+    margin-top: 20px;
+}
+
+table th, table td {
+    padding: 16px;
+    border: 1px solid var(--dividing-lines);
+    text-align: left;
+}
+
+table th {
+    background-color: #020617;
+    color: var(--yellow-fontstuff);
+}
+/*nth child selector added so that different years and degrees are easier to tell apart*/
+table tbody tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+table tr:hover {
+    background-color: rgba(251, 191, 36, 0.05);
+}
