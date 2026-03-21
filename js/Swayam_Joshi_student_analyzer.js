@@ -35,3 +35,12 @@ const students = [
         attendance: 80
     }
 ];
+
+//used a map to create a new array of students reduce() helps sum the marks
+const resStudents = students.map(student => {
+    const totalMarks = student.marks.reduce((sum, item) => sum + item.score, 0);
+    const averageMarks = totalMarks / student.marks.length;
+    
+    return { ...student, totalMarks, averageMarks };
+});
+
