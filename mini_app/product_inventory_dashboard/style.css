@@ -108,3 +108,24 @@ input:focus {
     font-size: 1.1rem;
     cursor: pointer;
 }
+
+/*amazon buttons are orange and have a specific rounded edge so to make it more clickable*/
+.amz-btn {
+    background-color: var(--amz-orange);
+    border: 1px solid #a88734;
+    padding: 10px 15px;
+    border-radius: 20px; /* The classic pill shape */
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: 0.1s;
+}
+
+.amz-btn:hover {
+    background-color: var(--amz-orange-hover);
+}
+
+.btn-delete {
+    background-color: #f7fafa;
+    border: 1px solid #d5d9d9;
+    padding: 5px 10px;
+}
