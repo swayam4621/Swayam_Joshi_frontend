@@ -15,3 +15,19 @@ body {
     font-family: "Segoe UI", Arial, sans-serif;
     margin: 0;
 }
+
+/* amazon headers are dark so added shadow*/
+.amz-header {
+    background-color: var(--amz-navy);
+    padding: 12px 40px;
+    color: var(--white);
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.header-logo {
+    font-size: 1.4rem;
+    font-weight: bold;
+    letter-spacing: -0.5px;
+}
