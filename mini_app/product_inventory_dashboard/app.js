@@ -167,3 +167,30 @@ function handleSort(data) {
     if (sortVal === 'alpha-az') sortedData.sort((a, b) => a.name.localeCompare(b.name));
     return sortedData;
 }
+
+//DATA MANAGEMENT 
+function addNewProduct(e) {
+    e.preventDefault();
+    const name = document.getElementById('new-p-name').value;
+    const price = Number(document.getElementById('new-p-price').value);
+    const stock = Number(document.getElementById('new-p-stock').value);
+    const category = document.getElementById('new-p-category').value;
+
+    if (price <= 0 || stock < 0) {
+        alert("Please enter valid numbers!");
+        return;
+    }
+
+    const newObj = { id: Date.now(), name, price, stock, category };
+    allCurrentProducts.push(newObj);
+    localStorage.setItem('inventory', JSON.stringify(allCurrentProducts));
+    
+    e.target.reset(); // Clears the form inputs
+    applyAllFilters();
+}
+
+function deleteItem(id) {
+    allCurrentProducts = allCurrentProducts.filter(p => p.id !== id);
+    localStorage.setItem('inventory', JSON.stringify(allCurrentProducts));
+    applyAllFilters();
+}
