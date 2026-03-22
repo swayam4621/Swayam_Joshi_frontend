@@ -138,3 +138,32 @@ function updateAnalytics(data) {
         </div>
     `;
 }
+
+// Logic and Filters
+function applyAllFilters() {
+    const term = document.getElementById('search-input').value.toLowerCase();
+    const category = document.getElementById('category-filter').value;
+    const showLowStock = document.getElementById('low-stock-filter').checked;
+
+    let filtered = allCurrentProducts.filter(p => {
+        const matchesName = p.name.toLowerCase().includes(term);
+        const matchesCat = category === 'all' || p.category === category;
+        const matchesStock = showLowStock ? p.stock < 5 : true;
+        return matchesName && matchesCat && matchesStock;
+    });
+
+    filtered = handleSort(filtered);
+
+    renderProducts(filtered);
+    updateAnalytics(filtered);
+}
+
+function handleSort(data) {
+    const sortVal = document.getElementById('sort-filter').value;
+    // We use slice() to avoid mutating the original array directly during sorting
+    let sortedData = data.slice(); 
+    if (sortVal === 'price-low') sortedData.sort((a, b) => a.price - b.price);
+    if (sortVal === 'price-high') sortedData.sort((a, b) => b.price - a.price);
+    if (sortVal === 'alpha-az') sortedData.sort((a, b) => a.name.localeCompare(b.name));
+    return sortedData;
+}
