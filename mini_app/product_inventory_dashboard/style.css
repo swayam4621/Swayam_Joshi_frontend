@@ -154,3 +154,9 @@ input:focus {
 .form-group input {
     width: 100%;
 }
+/*for mobile responsiveness*/
+@media (max-width: 768px) {
+    .stats-container { grid-template-columns: 1fr; }
+    .filter-bar { flex-direction: column; align-items: stretch; }
+    .amz-header { padding: 12px 20px; }
+}
