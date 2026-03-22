@@ -185,7 +185,7 @@ function addNewProduct(e) {
     allCurrentProducts.push(newObj);
     localStorage.setItem('inventory', JSON.stringify(allCurrentProducts));
     
-    e.target.reset(); // Clears the form inputs
+    e.target.reset(); //clears the form inputs
     applyAllFilters();
 }
 
@@ -194,3 +194,32 @@ function deleteItem(id) {
     localStorage.setItem('inventory', JSON.stringify(allCurrentProducts));
     applyAllFilters();
 }
+
+//Initialization
+
+function setupEventListeners() {
+    document.getElementById('search-input').addEventListener('input', applyAllFilters);
+    document.getElementById('category-filter').addEventListener('change', applyAllFilters);
+    document.getElementById('low-stock-filter').addEventListener('change', applyAllFilters);
+    document.getElementById('sort-filter').addEventListener('change', applyAllFilters);
+    document.getElementById('add-product-form').addEventListener('submit', addNewProduct);
+}
+
+window.addEventListener('DOMContentLoaded', async () => {
+    //fetch data
+    allCurrentProducts = await fetchInventory();
+    
+    //hide loading screen
+    document.getElementById('loading-overlay').style.display = 'none';
+    
+    //render HTML blocks
+    renderControls();
+    renderForm();
+    
+    //fill Data
+    renderProducts(allCurrentProducts);
+    updateAnalytics(allCurrentProducts);
+    
+    //for interactions
+    setupEventListeners();
+});
