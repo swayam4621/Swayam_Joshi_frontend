@@ -160,3 +160,37 @@ input:focus {
     .filter-bar { flex-direction: column; align-items: stretch; }
     .amz-header { padding: 12px 20px; }
 }
+
+/*fixed full-screen as z-index of 1000 to make it cover the entire dashboard*/
+#loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--white);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.spinner {
+    width: 45px;
+    height: 45px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid var(--amz-orange);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 15px;
+}
+
+@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+/*centre the main content so that its not stretching too wide on large screens */
+.amz-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
