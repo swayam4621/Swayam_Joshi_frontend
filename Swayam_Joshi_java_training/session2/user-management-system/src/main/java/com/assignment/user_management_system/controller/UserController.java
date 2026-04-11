@@ -27,7 +27,6 @@ public class UserController {
         return userService.getUser(id);
     }
 
-    // Required "Twist" API: /users/message/1?type=SHORT
     @GetMapping("/message/{id}")
     public Map<String, String> getWelcomeMessage(@PathVariable Long id, @RequestParam String type) {
         return Map.of("message", userService.getFormattedWelcome(id, type));
