@@ -9,12 +9,9 @@ import java.util.Map;
 public class NotificationService {
 
     private final NotificationComponent notificationComponent;
-    private final Map<String, MessageFormatter> formatters;
 
-    public NotificationService(NotificationComponent notificationComponent, 
-                               Map<String, MessageFormatter> formatters) {
+    public NotificationService(NotificationComponent notificationComponent) {
         this.notificationComponent = notificationComponent;
-        this.formatters = formatters;
     }
 
     // Task: Service calls a NotificationComponent
