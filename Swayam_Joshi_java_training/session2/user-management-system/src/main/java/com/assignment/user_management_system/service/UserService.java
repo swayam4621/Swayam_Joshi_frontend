@@ -3,6 +3,7 @@ package com.assignment.user_management_system.service;
 import com.assignment.user_management_system.model.User;
 import com.assignment.user_management_system.repository.UserRepository;
 import com.assignment.user_management_system.component.NotificationComponent;
+import com.assignment.user_management_system.exception.UserNotFoundException;
 import com.assignment.user_management_system.formatter.MessageFormatter;
 import org.springframework.stereotype.Service;
 import java.util.*;
@@ -29,7 +30,7 @@ public class UserService {
 
     //get user by Id 
     public User getUser(Long id) {
-        return userRepository.findById(id).orElseThrow(() -> new RuntimeException("User not found"));
+        return userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User with ID" +id+ "not found"));
     }
 
 
