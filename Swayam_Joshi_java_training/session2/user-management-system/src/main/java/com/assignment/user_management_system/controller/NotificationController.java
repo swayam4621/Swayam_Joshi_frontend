@@ -20,11 +20,4 @@ public class NotificationController {
         String result = notificationService.sendSystemNotification();
         return ResponseEntity.ok(Map.of("message", result));
     }
-
-    @GetMapping("/message")
-    public ResponseEntity<Map<String, String>> getFormattedMessage(@RequestParam String type) {
-        String content = "System Maintenance at 12 PM";
-        String formatted = notificationService.getFormattedMessage(type, content);
-        return ResponseEntity.ok(Map.of("formattedMessage", formatted));
-    }
 }
