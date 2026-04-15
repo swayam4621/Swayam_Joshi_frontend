@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Swayam Joshi Portfolio</title>
+    <link rel="stylesheet" href="../css/Swayam_Joshi_styles.css">
+</head>
+
+<body>
+
+<!-- Header section consists of the name in h1 and professional title with h2
+    I have provided the image source locally and added an alt description-->
+
+    <header>
+        <h1>Swayam Joshi</h1>
+        <h2>Java Developer & Intern at NucleusTeq</h2>
+        <img src="C:\Users\Swayam\Downloads\WhatsApp Image 2026-03-20 at 5.43.33 PM.jpeg" alt="Profile image of me"
+            width="100">
+    </header>
+
+    <!-- Each of the list elements in nav section have the internal links using ids -->
+    <nav>
+        <ul>
+            <li><a href="#about">About Me</a></li>
+            <li>
+                <a>Skills: </a>
+                <ul>
+                    <li><a href="#techskills">Technical skills</a></li>
+                    <li><a href="#techskills">Soft skills</a></li>
+                </ul>
+            </li>
+            <li><a href="#education">Education</a></li>
+            <li><a href="#projects">Projects</a></li>
+            <li><a href="#contact">Contact</a></li>
+        </ul>
+    </nav>
+
+    <section id="about">
+        <hr> <!--adds a horizontal line to the webpage above the about me heading-->
+        <h2>About me</h2>
+        <p>I am a final year <strong>Computer Science student</strong>, with a strong foundation in <em>Java and
+                SpringBoot</em> and am always aspiring to learn more about new twchnologies.</p>
+    </section>
+
+    <section id="skills">
+        <h2>Skills</h2>
+        <ul id="techskills"> <!--this id given here is used to jump to this section from the nav section -->
+            <li>Technical Skills</li>
+            <ul>
+                <li>Java</li>
+                <li>Python</li>
+                <li>SQL</li>
+                <li>SpringBoot</li>
+            </ul>
+            </li>
+            <li>Soft Skills</li>
+            <ul>
+                <li>Problem Solving</li>
+                <li>Team Communication</li>
+            </ul>
+            </li>
+        </ul>
+    </section>
+ 
+    <!--The education section is expected to render a table that displays the educational background in a clean organized way-->
+    <section id="education">
+        <h2>Education</h2>
+        <table border="1" cellpadding="10" width="100%"> <!--the table is invisble by default therefore I had to add border cellpadding and width specs-->
+            <thead>
+                <tr>
+                    <th>Degree</th>
+                    <th>Institution</th>
+                    <th>Year</th>
+                    <th>Grade</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td rowspan="2">B.Tech CSE</td>  <!-- Rowspan makes the row size as long as the number given across it, here it makes the row teo cells wide-->
+                    <td>Medicaps University, Indore</td>
+                    <td>2022 - 2026</td>
+                    <td>8.5 CGPA</td>
+                </tr>
+            </tbody>
+            <tbody>
+                <tr>
+                    <td rowspan="2">Higher Secondary School</td>
+                    <td>St. Norbert School, Indore</td>
+                    <td>2022</td>
+                    <td>89%</td>
+                </tr>
+            </tbody>
+
+        </table>
+
+    </section>
+
+    </section>
+    <section id="projects">
+        <h2>Projects</h2>
+        <ol>
+            <li>
+                <!-- Article tag used to define projects that are self contained and can be resused-->
+                <article>
+                    <h3>BankApp</h3>
+                    <p>A RESTful banking system developed using Java and Spring Boot.</p>
+                    <a href="https://github.com/swayam4621/BankApp">Github Link</a>
+                </article>
+            </li>
+            <li>
+                <article>
+                    <h3>Configuration-compliance Auditor</h3>
+                    <p>A Python tool for auditing network device configurations against compliance standards.</p>
+                    <a href="https://github.com/swayam4621/compliance-config-auditor">Github Link</a>
+                </article>
+            </li>
+        </ol>
+    </section>
+
+    <section id="contact">
+        <h2>Contact Me</h2>
+        <form action="#" method="post">
+            <div>
+                <label for="name">Name:</label><br>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div>
+                <label for="email">Email:</label><br>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div>
+                <label>Gender:</label><br>
+                <input type="radio" id="Gender" name="type" value="Male">
+                <label for="Gender">Male</label>
+                <input type="radio" id="Gender" name="type" value="Female">
+                <label for="Gender">Female</label>
+            </div>
+            <div>
+                <!-- Reason for contact seemed like a better alternative than skills interested in, which was in the assignment reference image so I have used that-->
+                <label for="reason">Reason for Contact:</label><br>
+                <select id="reason" name="reason">
+                    <option value="collaboration">Collaboration</option>
+                    <option value="hiring">Hiring</option>
+                </select>
+            </div>
+            <div>
+                <label for="message">Message:</label><br>
+                <textarea id="message" name="message"></textarea>
+            </div>
+            <button type="submit">Send</button>
+        </form>
+    </section>
+
+    <footer>
+        <p>&copy; 2026 Swayam Joshi. All rights reserved.</p> <!-- &copy is used to represnt a copyright symbol-->
+        <a href="https://www.linkedin.com/in/swayam-joshi-806727301/">LinkedIn Profile</a> |
+        <a href="https://github.com/swayam4621">GitHub</a>
+    </footer>
+
+</body>
+
+</html>

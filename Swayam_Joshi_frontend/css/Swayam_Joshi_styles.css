@@ -1,0 +1,286 @@
+:root {
+    --page-basecolor: #0f172a;
+    --section-background: #1e293b;
+    --yellow-fontstuff: #fbbf24;
+    --white-fontforheadings: #f8fafc;
+    --text-incontact: #94a3b8;
+    --dividing-lines: #334155;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background-color: var(--page-basecolor);
+    color: var(--white-fontforheadings);
+    line-height: 1.6;
+}
+
+
+header {
+    text-align: center;
+    padding: 80px 20px;
+    background: linear-gradient(180deg, #111827 0%, var(--page-basecolor) 100%);
+}
+
+/* dark gradient for for the headers background which is page basecolor*/
+header h1 {
+    font-size: 3.5rem;
+    letter-spacing: -2px;
+    /*h1 having just white font color as it has the name*/
+}
+
+header h2 {
+    color: var(--yellow-fontstuff);
+    font-weight: 500;
+    margin-bottom: 25px;
+    /*professional title in yellow font with h2*/
+}
+
+header img {
+    /*circular profile img*/
+    border-radius: 50%;
+    border: 3px solid var(--yellow-fontstuff);
+    padding: 6px;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+header img:hover {
+    transform: scale(1.1);
+    /*adding hovering style to the profile picture*/
+}
+
+nav {
+    background-color: rgba(30, 41, 59, 0.8);
+    backdrop-filter: blur(8px);
+    position: sticky;
+    /*sticky position for easy access to menu*/
+    top: 0;
+    z-index: 50;
+    border-bottom: 1px solid var(--dividing-lines);
+}
+
+nav ul {
+    /*flexbox navigation horizontally made*/
+    display: flex;
+    justify-content: center;
+    list-style: none;
+}
+
+nav a {
+    display: block;
+    padding: 20px 25px;
+    color: var(--white-fontforheadings);
+    text-decoration: none;
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: 0.3s ease;
+}
+
+nav a:hover {
+    /*when hovering over the nav section ie about me, skills, education, projects, contact*/
+    color: var(--yellow-fontstuff);
+    background: rgba(251, 191, 36, 0.1);
+}
+
+nav ul li ul {
+    display: none;
+    position: absolute;
+    background: var(--section-background);
+    border: 1px solid var(--dividing-lines);
+}
+
+/*hover over the skills block which makes a block having tech and soft skills*/
+nav ul li:hover ul {
+    display: block;
+}
+
+section {
+    max-width: 850px;
+    margin: 50px auto;
+    padding: 40px;
+    background-color: var(--section-background);
+    border-radius: 12px;
+    border: 1px solid var(--dividing-lines);
+}
+
+h2 {
+    margin-bottom: 30px;
+    font-size: 1.75rem;
+    color: var(--yellow-fontstuff);
+}
+
+#skills ul {
+    list-style-type: square;
+    padding-left: 20px;
+    line-height: 2;
+}
+
+#skills ul ul {
+    /* shows difference between two categories tech/soft using 700 font weight*/
+    font-weight: 700;
+    margin: 10px 0 20px 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    list-style: circle;
+}
+
+table {
+    width: 100%;
+    border: #020617;
+    border-collapse: collapse;
+    /*border collapsed is used to get rid of double border look*/
+    margin-top: 20px;
+}
+
+table th,
+table td {
+    padding: 16px;
+    border: 1px solid var(--dividing-lines);
+    text-align: left;
+}
+
+table th {
+    background-color: #020617;
+    color: var(--yellow-fontstuff);
+}
+
+/*nth child selector added so that different years and degrees are easier to tell apart*/
+table tbody tr:nth-child(even) {
+    background-color: rgba(255, 255, 255, 0.02);
+}
+
+table tr:hover {
+    background-color: rgba(251, 191, 36, 0.05);
+}
+
+article {
+    /* margin-bottom for creating visual separation between project blocks*/
+    margin-bottom: 35px;
+}
+
+article h3 {
+    margin-bottom: 10px;
+}
+
+article a {
+    /*making project links with the amber theme and adding transition */
+    color: var(--yellow-fontstuff);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+article a:hover {
+    /*adding hover color effect */
+    color: white;
+}
+
+form div {
+    margin-bottom: 20px;
+}
+
+label {
+    /*display: block so it has a solid feel*/
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-incontact);
+    font-size: 0.9rem;
+}
+
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 14px;
+    background-color: var(--page-basecolor);
+    border: 1px solid var(--dividing-lines);
+    color: white;
+    border-radius: 6px;
+    transition: border-color 0.3s;
+}
+
+input:focus,
+textarea:focus {
+    outline: none;
+    border-color: var(--yellow-fontstuff);
+}
+
+button[type="submit"] {
+    background-color: var(--yellow-fontstuff);
+    color: var(--page-basecolor);
+    padding: 14px 40px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 700;
+    cursor: pointer;
+    /*cursor made a pointer*/
+    transition: 0.2s;
+}
+
+button[type="submit"]:hover {
+    /*hover for the amber button to make it interactive*/
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(251, 191, 36, 0.3);
+}
+
+input[type="radio"] {
+    width: auto;
+    display: inline-block;
+    margin-right: 8px;
+    cursor: pointer;
+}
+
+/* to make the Male/Female text sit next to the radio dots */
+input[type="radio"]+label {
+    display: inline-block;
+    width: auto;
+    margin-right: 20px;
+    cursor: pointer;
+    vertical-align: middle;
+}
+
+/* for the gender main label specifically */
+form div>label:first-child {
+    display: block;
+    margin-bottom: 10px;
+}
+
+footer {
+    text-align: center;
+    padding: 60px;
+    color: var(--text-incontact);
+    font-size: 0.85rem;
+}
+
+footer a {
+    color: var(--yellow-fontstuff);
+    text-decoration: none;
+}
+
+@media (max-width: 768px) {
+
+    /*used flex direction: column to stack links vertically if used on mobile devices*/
+    nav ul {
+        flex-direction: column;
+    }
+
+    header h1 {
+        font-size: 2.2rem;
+    }
+
+    section {
+        margin: 20px;
+        padding: 25px;
+    }
+
+    #skills ul ul {
+        grid-template-columns: 1fr;
+    }
+}
