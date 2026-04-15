@@ -19,20 +19,22 @@ public class UserController {
         this.userService = userService;
     }
 
+    // --- Get all users ---
     @GetMapping("/users")
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAllUsers();
         return ResponseEntity.ok(users);
     }
 
+    // --- GET /users/search API Endpoint ---
     @GetMapping("/users/search")
     public ResponseEntity<?> search(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) Integer age,
             @RequestParam(required = false) String role) {
-        
+
         List<User> results = userService.searchUsers(name, age, role);
-        
+
         // to handle empty list returned by the search
         if (results.isEmpty()) {
             String message = userService.getEmptySearchResultMessage(name, age, role);
@@ -40,14 +42,13 @@ public class UserController {
             response.put("message", message);
             return ResponseEntity.ok(response);
         }
-
-        // if results exist we return the list as originally intended.
         return ResponseEntity.ok(results);
     }
 
+    // --- POST /submit API Endpoint ---
     @PostMapping("/submit")
     public ResponseEntity<Map<String, Object>> submit(@RequestBody User user) {
-    
+
         User savedUser = userService.submitUser(user);
         Map<String, Object> response = new HashMap<>();
         response.put("message", "user created successfully");
@@ -56,14 +57,15 @@ public class UserController {
 
     }
 
+    // --- DELETE /users/{id} API Endpoint
     @DeleteMapping("/users/{id}")
     public ResponseEntity<Map<String, String>> deleteUser(
             @PathVariable Long id,
             @RequestParam(required = false, defaultValue = "false") boolean confirm) {
-        
+
         Map<String, String> response = new HashMap<>();
 
-        //this check at the controller level is to prevent data wipes
+        // this check at the controller level is to prevent data wipes
         if (!confirm) {
             response.put("error", "Confirmation required");
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
@@ -73,7 +75,7 @@ public class UserController {
             userService.deleteUser(id);
             response.put("message", "user deleted successfully");
             return ResponseEntity.ok(response);
-            
+
         } catch (RuntimeException ex) {
             response.put("error", ex.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);

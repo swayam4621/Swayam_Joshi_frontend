@@ -12,7 +12,7 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    //this method ensures the api always returns a standard 404 json response
+    // this method ensures the api always returns a standard 404 json response
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<Map<String, String>> handleUserNotFound(UserNotFoundException ex) {
         Map<String, String> errorResponse = new HashMap<>();
@@ -21,7 +21,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse);
     }
 
-    // this method catches validation errors from the service/component and returns a 400 bad request, hiding raw java stack traces
+    // this method catches validation errors from the service/component and returns
+    // a 400 bad request, hiding raw java stack traces
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, String>> handleBadRequest(IllegalArgumentException ex) {
         Map<String, String> errorResponse = new HashMap<>();
@@ -34,11 +35,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, String>> handleJsonErrors(HttpMessageNotReadableException ex) {
         Map<String, String> errorResponse = new HashMap<>();
         errorResponse.put("error", "malformed json request");
-        errorResponse.put("details", "please ensure all fields match their required data types (e.g., numbers for age).");
+        errorResponse.put("details",
+                "please ensure all fields match their required data types (e.g., numbers for age).");
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponse);
     }
 
-    //final fallback
+    // final fallback
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleGeneralException(Exception ex) {
         Map<String, String> errorResponse = new HashMap<>();
