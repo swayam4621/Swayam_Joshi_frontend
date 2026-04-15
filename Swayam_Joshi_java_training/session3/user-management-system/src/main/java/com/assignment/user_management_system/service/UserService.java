@@ -25,7 +25,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    
+
     public List<User> searchUsers(String name, Integer age, String role) {
         return userRepository.findAll().stream()
             //using ignorecase for strings to handle case insensitive input
@@ -33,6 +33,21 @@ public class UserService {
             .filter(u -> age == null || u.getAge().equals(age))
             .filter(u -> role == null || u.getRole().equalsIgnoreCase(role))
             .collect(Collectors.toList());
+    }
+
+    // helper function to return a message if the search results in no records for that attribute
+    public String getEmptySearchResultMessage(String name, Integer age, String role) {
+        StringBuilder sb = new StringBuilder("no users exist with ");
+        
+        if (name != null) sb.append("name '").append(name).append("' ");
+        if (age != null) sb.append("age ").append(age).append(" ");
+        if (role != null) sb.append("role '").append(role).append("' ");
+        
+        if (name == null && age == null && role == null) {
+            return "no users exist in the system matching the request.";
+        }
+
+        return sb.toString().trim();
     }
 
     public User submitUser(User user) {
