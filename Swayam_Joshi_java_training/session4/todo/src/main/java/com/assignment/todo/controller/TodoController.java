@@ -7,6 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.List;
 
 @RestController
@@ -42,8 +44,13 @@ public class TodoController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteTodo(@PathVariable Long id) {
+    public ResponseEntity<Map<String, String>> deleteTodo(@PathVariable Long id) {
         todoService.deleteTodo(id);
-        return ResponseEntity.noContent().build();
+        
+        Map<String, String> response = new HashMap<>();
+        response.put("message", "Todo item with ID " + id + " was successfully deleted.");
+        
+        //Return a 200 OK status instead of 204 No Content
+        return ResponseEntity.ok(response);
     }
 }
