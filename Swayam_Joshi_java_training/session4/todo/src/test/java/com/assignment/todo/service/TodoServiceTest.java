@@ -1,5 +1,6 @@
 package com.assignment.todo.service;
 
+import com.assignment.todo.client.NotificationServiceClient;
 import com.assignment.todo.dto.TodoDTO;
 import com.assignment.todo.exception.ResourceNotFoundException;
 import com.assignment.todo.mapper.TodoMapper;
@@ -19,6 +20,7 @@ import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 //Testing using AAA pattern = Arrange, Act, Assert
@@ -33,6 +35,10 @@ class TodoServiceTest {
     // creates fake mapper
     @Mock
     private TodoMapper todoMapper;
+
+    // creates fake notification client
+    @Mock
+    private NotificationServiceClient notificationServiceClient;
 
     //injects the mocks into the service being tested
     @InjectMocks
@@ -60,7 +66,7 @@ class TodoServiceTest {
     void createTodo_ShouldSetDefaultStatusAndTimestamp() {
         //Arrange
         todoDTO.setStatus(null); // No status provided
-        when(todoMapper.toEntity(todoDTO)).thenReturn(new Todo());
+        when(todoMapper.toEntity(todoDTO)).thenReturn(new Todo()); //return pre built todo 
         when(todoRepository.save(any(Todo.class))).thenReturn(todo);
         when(todoMapper.toDTO(any(Todo.class))).thenReturn(todoDTO);
 
@@ -70,6 +76,7 @@ class TodoServiceTest {
         //Assert
         assertNotNull(result);
         verify(todoRepository, times(1)).save(any(Todo.class));
+        verify(notificationServiceClient, times(1)).sendNotification(anyString());
     }
 
     @Test
@@ -97,4 +104,53 @@ class TodoServiceTest {
         assertEquals(TodoStatus.COMPLETED, result.getStatus());
         assertEquals("Updated Title", result.getTitle());
     }
+
+    // Additional tests for invalid status transitions, deleteTodo, and getAllTodos to achieve 85% coverage
+    //session5
+    @Test
+    void getAllTodos_ShouldReturnListOfTodos() {
+        // Arrange
+        //Using List.of() to simulate the database returning a list with one item
+        when(todoRepository.findAll()).thenReturn(java.util.List.of(todo));
+        when(todoMapper.toDTO(any(Todo.class))).thenReturn(todoDTO);
+
+        // Act
+        java.util.List<TodoDTO> result = todoService.getAllTodos();
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1, result.size()); // Verify the list has exactly 1 item
+        verify(todoRepository, times(1)).findAll(); // Verify the database was queried
+    }
+
+    @Test
+    void getTodoById_ShouldReturnTodo_WhenFound() {
+        // Arrange
+        // Simulate the database successfully finding ID 1
+        when(todoRepository.findById(1L)).thenReturn(Optional.of(todo));
+        when(todoMapper.toDTO(any(Todo.class))).thenReturn(todoDTO);
+
+        // Act
+        TodoDTO result = todoService.getTodoById(1L);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(1L, result.getId());
+        assertEquals("Test Task", result.getTitle());
+    }
+
+    @Test
+    void deleteTodo_ShouldCallRepositoryDelete_WhenExists() {
+        // Arrange
+        // deleteTodo first checks if the item exists, so we must mock the findById call
+        when(todoRepository.findById(1L)).thenReturn(Optional.of(todo));
+
+        // Act
+        todoService.deleteTodo(1L);
+
+        // Assert
+        // Verify that the repository's delete method was actually called
+        verify(todoRepository, times(1)).delete(todo);
+    }
+
 }
