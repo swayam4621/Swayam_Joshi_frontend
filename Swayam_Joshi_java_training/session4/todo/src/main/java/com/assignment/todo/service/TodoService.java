@@ -35,7 +35,7 @@ public class TodoService {
         this.notificationServiceClient = notificationServiceClient; // Simulating external service client
     }
 
-    // --- CREATE TODO ---
+    // --- CREATE TODO FLOW ---
     public TodoDTO createTodo(TodoDTO todoDTO) {
         Todo todo = todoMapper.toEntity(todoDTO);
         
