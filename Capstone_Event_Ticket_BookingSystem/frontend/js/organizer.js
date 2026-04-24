@@ -1,6 +1,5 @@
 const EVENT_API_URL = 'http://localhost:8082/api/events';
 
-
 document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('jwtToken');
     if (!token || localStorage.getItem('userRole') !== 'ORGANIZER') {
@@ -8,8 +7,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
     document.getElementById('user-display-name').innerText = localStorage.getItem('userEmail');
-    
-    // Load events immediately on dashboard load
     fetchMyEvents();
 });
 
@@ -18,7 +15,7 @@ function logout() {
     globalThis.location.href = 'index.html';
 }
 
-//Tab Switching
+// Tab Switching
 function switchTab(tab) {
     const myEventsSec = document.getElementById('my-events-section');
     const createSec = document.getElementById('create-section');
@@ -28,22 +25,18 @@ function switchTab(tab) {
     if (tab === 'my-events') {
         myEventsSec.classList.remove('hidden');
         createSec.classList.add('hidden');
-        tabMyEvents.style.color = 'var(--primary-teal)';
-        tabMyEvents.style.fontWeight = 'bold';
-        tabCreate.style.color = '#888';
-        tabCreate.style.fontWeight = 'normal';
+        tabMyEvents.className = 'tab-btn active-tab';
+        tabCreate.className = 'tab-btn inactive-tab';
         fetchMyEvents(); 
     } else {
         myEventsSec.classList.add('hidden');
         createSec.classList.remove('hidden');
-        tabCreate.style.color = 'var(--primary-teal)';
-        tabCreate.style.fontWeight = 'bold';
-        tabMyEvents.style.color = '#888';
-        tabMyEvents.style.fontWeight = 'normal';
+        tabCreate.className = 'tab-btn active-tab';
+        tabMyEvents.className = 'tab-btn inactive-tab';
     }
 }
 
-//Fetch & show My Events
+// Fetch & show My Events
 async function fetchMyEvents() {
     try {
         const response = await fetch(`${EVENT_API_URL}/my-events`, {
@@ -72,23 +65,43 @@ function renderEvents(events) {
     noEventsMsg.classList.add('hidden');
     
     events.forEach(event => {
-        //card creating
         const card = document.createElement('div');
-        card.style.cssText = "border: 1px solid #ddd; border-radius: 8px; padding: 15px; background: #fafafa;";
+        card.className = "event-card"; // Replaced inline CSS
         
         const eventJson = encodeURIComponent(JSON.stringify(event));
+
+        // Replaced inline CSS with badge classes
+        let statusBadge = event.status === 'ACTIVE' 
+            ? `<span class="badge badge-active">ACTIVE</span>` 
+            : `<span class="badge badge-cancelled">CANCELLED</span>`;
         
+        let actionButtons = '';
+        if (event.status === 'ACTIVE') {
+            actionButtons = `
+                <div class="card-actions">
+                    <button onclick="openUpdateModal('${eventJson}')" class="btn-edit">Edit</button>
+                    <button onclick="cancelEvent(${event.id})" class="btn-cancel">Cancel</button>
+                </div>
+            `;
+        }
+
+        // Replaced all inline CSS with classes
         card.innerHTML = `
-            <h3 style="margin-bottom: 5px; color: #333;">${event.name}</h3>
-            <p style="font-size: 13px; color: #666; margin-bottom: 10px;">${event.venue} • ₹${event.ticketPrice}</p>
-            <p style="font-size: 12px; color: #888; margin-bottom: 15px;">Date: ${new Date(event.eventDateTime).toLocaleString()}</p>
-            <button onclick="openUpdateModal('${eventJson}')" class="nav-btn-outline" style="width: 100%; font-size: 13px;">Update Event</button>
+            <div class="card-header">
+                <h3 class="card-title">${event.name}</h3>
+                ${statusBadge}
+            </div>
+            <p class="card-text">${event.venue}</p>
+            <p class="card-text-sm">${new Date(event.eventDateTime).toLocaleString()}</p>
+            
+            <button onclick="openDetailsModal('${eventJson}')" class="btn primary-btn btn-view-details">View Details</button>
+            ${actionButtons}
         `;
         grid.appendChild(card);
     });
 }
 
-//Create Event Logic
+// Create Event Logic
 document.getElementById('create-event-form').addEventListener('submit', async function(e) {
     e.preventDefault();
     const eventData = {
@@ -121,11 +134,10 @@ document.getElementById('create-event-form').addEventListener('submit', async fu
     }
 });
 
-//Update Event Modal Logic
+// Update Event Modal Logic
 function openUpdateModal(eventJsonEncoded) {
     const event = JSON.parse(decodeURIComponent(eventJsonEncoded));
     
-    //pre fill the form with existing data
     document.getElementById('update-event-id').value = event.id;
     document.getElementById('upd-title').value = event.name;
     document.getElementById('upd-desc').value = event.description;
@@ -144,7 +156,7 @@ function closeUpdateModal() {
     document.getElementById('update-modal').classList.add('hidden');
 }
 
-//Submit Update Logic
+// Submit Update Logic
 document.getElementById('update-event-form').addEventListener('submit', async function(e) {
     e.preventDefault();
     const eventId = document.getElementById('update-event-id').value;
@@ -187,3 +199,59 @@ document.getElementById('update-event-form').addEventListener('submit', async fu
         console.error("Error updating event:", error);
     }
 });
+
+// Event Details Logic
+function openDetailsModal(eventJsonEncoded) {
+    const event = JSON.parse(decodeURIComponent(eventJsonEncoded));
+    
+    document.getElementById('det-title').innerText = event.name;
+    document.getElementById('det-desc').innerText = event.description;
+    document.getElementById('det-date').innerText = new Date(event.eventDateTime).toLocaleString();
+    document.getElementById('det-venue').innerText = event.venue;
+    document.getElementById('det-price').innerText = event.ticketPrice;
+    document.getElementById('det-avail').innerText = event.availableSeats;
+    document.getElementById('det-total').innerText = event.totalSeats;
+
+    const statusEl = document.getElementById('det-status');
+    
+    if (event.status === 'ACTIVE') {
+        statusEl.innerText = "ACTIVE";
+        statusEl.className = "badge badge-rounded badge-active";
+    } else {
+        statusEl.innerText = "CANCELLED";
+        statusEl.className = "badge badge-rounded badge-cancelled";
+    }
+
+    document.getElementById('details-modal').classList.remove('hidden');
+}
+
+function closeDetailsModal() {
+    document.getElementById('details-modal').classList.add('hidden');
+}
+
+// Cancel Event 
+async function cancelEvent(eventId) {
+    if (!confirm("Are you sure you want to cancel this event? This action cannot be undone.")) {
+        return;
+    }
+
+    try {
+        const response = await fetch(`${EVENT_API_URL}/cancel/${eventId}`, {
+            method: 'PUT',
+            headers: {
+                'Authorization': `Bearer ${localStorage.getItem('jwtToken')}`
+            }
+        });
+
+        if (response.ok) {
+            alert("Event successfully cancelled.");
+            fetchMyEvents(); 
+        } else {
+            const errorData = await response.json();
+            alert("Failed to cancel event: " + (errorData.error || "Unknown error"));
+        }
+    } catch (error) {
+        console.error("Error cancelling event:", error);
+        alert("Server connection failed.");
+    }
+}
