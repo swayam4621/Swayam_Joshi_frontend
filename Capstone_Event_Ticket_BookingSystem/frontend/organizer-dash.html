@@ -6,73 +6,91 @@
     <title>EvenTix - Organizer Dashboard</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
-<body style="background-color: #f0f2f5;">
+<body class="dashboard-body">
 
     <nav class="navbar">
-        <div class="logo">EvenTix <span style="color: var(--primary-teal); font-size: 14px;">ORGANIZER</span></div>
+        <div class="logo">EvenTix <span class="logo-highlight">ORGANIZER</span></div>
         <div class="nav-links">
-            <span id="user-display-name" style="font-weight: 600;"></span>
+            <span id="user-display-name" class="user-name-display"></span>
             <button class="nav-btn-outline" onclick="logout()">Logout</button>
         </div>
     </nav>
 
-    <div class="dashboard-container" style="max-width: 900px; margin: 40px auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+    <div class="dashboard-panel">
         
-        <div style="display: flex; gap: 20px; border-bottom: 2px solid #eee; margin-bottom: 30px; padding-bottom: 10px;">
-            <button class="text-btn" id="tab-my-events" onclick="switchTab('my-events')" style="font-size: 18px; color: var(--primary-teal); font-weight: bold;">My Events</button>
-            <button class="text-btn" id="tab-create" onclick="switchTab('create')" style="font-size: 18px; color: #888;">Create New Event</button>
+        <div class="tab-container">
+            <button class="tab-btn active-tab" id="tab-my-events" onclick="switchTab('my-events')">My Events</button>
+            <button class="tab-btn inactive-tab" id="tab-create" onclick="switchTab('create')">Create New Event</button>
         </div>
 
         <div id="my-events-section">
-            <h2 style="margin-bottom: 20px;">Manage Your Events</h2>
-            <div id="events-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px;">
-                </div>
-            <div id="no-events-msg" class="hidden" style="text-align: center; color: #888; padding: 40px;">
+            <h2 class="section-title">Manage Your Events</h2>
+            <div id="events-grid"></div>
+            <div id="no-events-msg" class="hidden">
                 You haven't created any events yet.
             </div>
         </div>
 
         <div id="create-section" class="hidden">
-            <h2 style="margin-bottom: 20px; color: #1a1a1a;">Create New Event</h2>
+            <h2 class="section-title">Create New Event</h2>
             <form id="create-event-form">
                 <div class="input-group"><label>Event Title</label><input type="text" id="event-title" required></div>
                 <div class="input-group"><label>Description</label><input type="text" id="event-desc" required></div>
-                <div style="display: flex; gap: 20px;">
-                    <div class="input-group" style="flex: 1;"><label>Date & Time</label><input type="datetime-local" id="event-date" required></div>
-                    <div class="input-group" style="flex: 1;"><label>Location</label><input type="text" id="event-location" required></div>
+                <div class="form-row">
+                    <div class="input-group flex-1"><label>Date & Time</label><input type="datetime-local" id="event-date" required></div>
+                    <div class="input-group flex-1"><label>Location</label><input type="text" id="event-location" required></div>
                 </div>
-                <div style="display: flex; gap: 20px;">
-                    <div class="input-group" style="flex: 1;"><label>Ticket Price (₹)</label><input type="number" id="event-price" required min="0" step="0.01"></div>
-                    <div class="input-group" style="flex: 1;"><label>Total Tickets</label><input type="number" id="event-tickets" required min="1"></div>
+                <div class="form-row">
+                    <div class="input-group flex-1"><label>Ticket Price (₹)</label><input type="number" id="event-price" required min="0" step="0.01"></div>
+                    <div class="input-group flex-1"><label>Total Tickets</label><input type="number" id="event-tickets" required min="1"></div>
                 </div>
                 <div id="event-error" class="error-msg hidden"></div>
                 <div id="event-success" class="success-msg hidden"></div>
-                <button type="submit" class="btn primary-btn" style="background-color: var(--primary-teal); color: white;">Publish Event</button>
+                <button type="submit" class="btn primary-btn">Publish Event</button>
             </form>
         </div>
     </div>
 
     <div id="update-modal" class="modal-backdrop hidden">
-        <div class="auth-wrapper relative" style="max-width: 500px; padding: 40px;">
+        <div class="auth-wrapper relative modal-box">
             <button class="close-modal-btn" onclick="closeUpdateModal()">✕</button>
             <h2>Update Event</h2>
-            <form id="update-event-form" style="margin-top: 20px;">
+            <form id="update-event-form" class="modal-form">
                 <input type="hidden" id="update-event-id">
                 <div class="input-group"><label>Title</label><input type="text" id="upd-title" required></div>
                 <div class="input-group"><label>Description</label><input type="text" id="upd-desc" required></div>
-                <div style="display: flex; gap: 15px;">
-                    <div class="input-group" style="flex: 1;"><label>Date & Time</label><input type="datetime-local" id="upd-date" required></div>
-                    <div class="input-group" style="flex: 1;"><label>Location</label><input type="text" id="upd-location" required></div>
+                <div class="form-row-sm">
+                    <div class="input-group flex-1"><label>Date & Time</label><input type="datetime-local" id="upd-date" required></div>
+                    <div class="input-group flex-1"><label>Location</label><input type="text" id="upd-location" required></div>
                 </div>
-                
-                <div style="display: flex; gap: 15px;">
-                    <div class="input-group" style="flex: 1;"><label>Price (₹)</label><input type="number" id="upd-price" required min="0" step="0.01"></div>
-                    <div class="input-group" style="flex: 1;"><label>Total Tickets</label><input type="number" id="upd-tickets" required min="1"></div>
+                <div class="form-row-sm">
+                    <div class="input-group flex-1"><label>Price (₹)</label><input type="number" id="upd-price" required min="0" step="0.01"></div>
+                    <div class="input-group flex-1"><label>Total Tickets</label><input type="number" id="upd-tickets" required min="1"></div>
                 </div>
-                
                 <div id="upd-error" class="error-msg hidden"></div>
                 <button type="submit" class="btn primary-btn">Save Changes</button>
             </form>
+        </div>
+    </div>
+
+    <div id="details-modal" class="modal-backdrop hidden">
+        <div class="auth-wrapper relative modal-box-lg">
+            <button class="close-modal-btn" onclick="closeDetailsModal()">✕</button>
+            
+            <div class="modal-header-flex">
+                <h2 id="det-title" class="modal-title-m0">Event Details</h2>
+                <span id="det-status" class="badge badge-rounded"></span>
+            </div>
+            
+            <div class="details-box">
+                <p id="det-desc" class="details-desc"></p>
+                <div class="details-grid">
+                    <div><strong class="details-label">DATE & TIME</strong><span id="det-date" class="details-val"></span></div>
+                    <div><strong class="details-label">VENUE</strong><span id="det-venue" class="details-val"></span></div>
+                    <div><strong class="details-label">TICKET PRICE</strong><span class="details-val">₹<span id="det-price"></span></span></div>
+                    <div><strong class="details-label">CAPACITY</strong><span id="det-avail" class="details-val-highlight"></span> / <span id="det-total" class="details-val"></span> Available</div>
+                </div>
+            </div>
         </div>
     </div>
 
