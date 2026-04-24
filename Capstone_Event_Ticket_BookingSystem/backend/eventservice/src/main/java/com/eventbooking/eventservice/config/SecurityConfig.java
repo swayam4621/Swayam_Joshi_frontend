@@ -33,10 +33,13 @@ public class SecurityConfig {
 
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.GET, "/api/events").permitAll()
+                //to allow hidden options
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/api/events/create", "/api/events/update/**", "/api/events/cancel/**")
-                    .hasRole("ORGANIZER")
-                .requestMatchers("/api/bookings/**").hasRole("CUSTOMER")
+                    .hasAnyAuthority("ORGANIZER","ROLE_ORGANIZER")
+
+                .requestMatchers("/api/bookings/**").hasAnyAuthority("CUSTOMER","ROLE_CUSTOMER")
+
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
