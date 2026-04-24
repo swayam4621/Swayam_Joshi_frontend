@@ -55,4 +55,27 @@ public class EventService {
     public List<Event> getEventsByOrganizer(String organizerEmail) {
         return eventRepository.findByOrganizerEmail(organizerEmail);
     }
+
+    public Event getEventById(Long eventId, String organizerEmail) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EventNotFoundException("Event with ID " + eventId + " could not be found."));
+
+        //Ensuring the organizer requesting details created the event
+        if (!organizerEmail.equals(event.getOrganizerEmail())) {
+            throw new UnauthorizedAccessException("Not authorized to view this event.");
+        }
+        return event;
+    }
+
+    public Event cancelEvent(Long eventId, String organizerEmail) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EventNotFoundException("Event with ID " + eventId + " could not be found."));
+
+        if (!organizerEmail.equals(event.getOrganizerEmail())) {
+            throw new UnauthorizedAccessException("Not authorized to cancel this event.");
+        }
+
+        event.setStatus(Event.EventStatus.CANCELLED_BY_ORGANIZER);
+        return eventRepository.save(event);
+    }
 }
