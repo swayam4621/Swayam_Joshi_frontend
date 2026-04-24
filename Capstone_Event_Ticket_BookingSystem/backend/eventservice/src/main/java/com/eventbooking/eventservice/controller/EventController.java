@@ -6,7 +6,7 @@ import com.eventbooking.eventservice.service.EventService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import java.util.List;
+import java.util.List;  
 
 //use principal to automatically grab the user's email from the JWT token that Spring Security intercepted
 import java.security.Principal;
@@ -38,5 +38,17 @@ public class EventController {
     public ResponseEntity<List<Event>> getMyEvents(Principal principal) {
         List<Event> myEvents = eventService.getEventsByOrganizer(principal.getName());
         return ResponseEntity.ok(myEvents);
-}
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Event> getEventById(@PathVariable Long id, Principal principal) {
+        Event event = eventService.getEventById(id, principal.getName());
+        return ResponseEntity.ok(event);
+    }
+
+    @PutMapping("/cancel/{id}")
+    public ResponseEntity<Event> cancelEvent(@PathVariable Long id, Principal principal) {
+        Event cancelledEvent = eventService.cancelEvent(id, principal.getName());
+        return ResponseEntity.ok(cancelledEvent);
+    }
 }
