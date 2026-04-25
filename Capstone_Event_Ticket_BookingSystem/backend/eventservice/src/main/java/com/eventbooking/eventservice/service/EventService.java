@@ -7,6 +7,7 @@ import com.eventbooking.eventservice.exception.UnauthorizedAccessException;
 import com.eventbooking.eventservice.repository.EventRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.time.LocalDateTime;
 
 @Service
 public class EventService {
@@ -52,19 +53,42 @@ public class EventService {
         return eventRepository.save(event);
     }
 
-    public List<Event> getEventsByOrganizer(String organizerEmail) {
+    public List<Event> getEventsByOrganizer(String organizerEmail, String filter) {
+        LocalDateTime now = LocalDateTime.now();
+
+        if ("upcoming".equalsIgnoreCase(filter)) {
+            return eventRepository.findByOrganizerEmailAndStatusAndEventDateTimeAfterOrderByEventDateTimeAsc(
+                    organizerEmail, Event.EventStatus.ACTIVE, now);
+        } 
+        else if ("past".equalsIgnoreCase(filter)) {
+            return eventRepository.findByOrganizerEmailAndStatusAndEventDateTimeBeforeOrderByEventDateTimeDesc(
+                    organizerEmail, Event.EventStatus.ACTIVE, now);
+        } 
+        else if ("cancelled".equalsIgnoreCase(filter)) {
+            return eventRepository.findByOrganizerEmailAndStatusOrderByEventDateTimeDesc(
+                    organizerEmail, Event.EventStatus.CANCELLED_BY_ORGANIZER);
+        }
         return eventRepository.findByOrganizerEmail(organizerEmail);
     }
 
-    public Event getEventById(Long eventId, String organizerEmail) {
-        Event event = eventRepository.findById(eventId)
-                .orElseThrow(() -> new EventNotFoundException("Event with ID " + eventId + " could not be found."));
+    public List<Event> getAllEvents(String filter) {
+        LocalDateTime now = LocalDateTime.now();
 
-        //Ensuring the organizer requesting details created the event
-        if (!organizerEmail.equals(event.getOrganizerEmail())) {
-            throw new UnauthorizedAccessException("Not authorized to view this event.");
+        if ("upcoming".equalsIgnoreCase(filter)) {
+            return eventRepository.findByStatusAndEventDateTimeAfterOrderByEventDateTimeAsc(
+                    Event.EventStatus.ACTIVE, now);
+        } 
+        else if ("past".equalsIgnoreCase(filter)) {
+            return eventRepository.findByStatusAndEventDateTimeBeforeOrderByEventDateTimeDesc(
+                    Event.EventStatus.ACTIVE, now);
         }
-        return event;
+        //fallback
+        return eventRepository.findAll();
+    }
+
+    public Event getEventById(Long eventId) {
+            return eventRepository.findById(eventId)
+                .orElseThrow(() -> new EventNotFoundException("Event with ID " + eventId + " could not be found."));
     }
 
     public Event cancelEvent(Long eventId, String organizerEmail) {
