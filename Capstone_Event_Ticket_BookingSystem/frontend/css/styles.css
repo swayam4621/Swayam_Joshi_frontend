@@ -254,7 +254,7 @@ body {
 .tab-container { display: flex; gap: 20px; border-bottom: 2px solid #eee; margin-bottom: 30px; padding-bottom: 10px; }
 
 .tab-btn { font-size: 18px; border: none; background: none; cursor: pointer; padding: 0; }
-.active-tab { color: var(--primary-teal); font-weight: bold; }
+.active-tab { color: var(--primary-teal); font-weight: bold; border-bottom: 3px solid var(--primary-teal); padding-bottom: 5px; }
 .inactive-tab { color: #888; font-weight: normal; }
 
 .section-title { margin-bottom: 20px; color: #1a1a1a; }
@@ -299,3 +299,97 @@ body {
 .btn-cancel { flex: 1; padding: 8px; background: white; border: 1px solid #dc3545; color: #dc3545; font-size: 13px; border-radius: 4px; cursor: pointer; transition: 0.2s; }
 .btn-cancel:hover { background: #fdf5f6; }
 .btn-view-details { width: 100%; padding: 8px; font-size: 13px; margin-top: auto; }
+
+.customer-main-container {
+    padding: 40px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.user-greeting-text {
+    color: white; 
+    margin-right: 15px; 
+    font-weight: 500;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.mb-30 { margin-bottom: 30px; }
+.mt-10 { margin-top: 10px; }
+.mt-20 { margin-top: 20px; }
+.mt-30 { margin-top: 30px; }
+.mt-auto { margin-top: auto; }
+
+.btn-lg {
+    padding: 15px;
+    font-size: 1.1rem;
+}
+
+.btn-disabled {
+    background-color: #cccccc !important;
+    color: #333333 !important;
+    cursor: not-allowed;
+}
+
+a.btn-view-details {
+    display: inline-block;
+    text-align: center;
+    text-decoration: none;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* For action buttons in event cards */
+.btn-group-row {
+    display: flex;
+    gap: 10px;
+    width: 100%;
+}
+
+/*For completed badge in past events */
+.badge-completed-full {
+    background: #e0e0e0;
+    color: #555;
+    text-align: center;
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+/*Styling for no events found message */
+.empty-msg {
+    text-align: center;
+    color: #888;
+    padding: 40px;
+    font-style: italic;
+}
+
+/*Responsive form rows */
+@media (max-width: 768px) {
+    .form-row, .form-row-sm {
+        flex-direction: column;
+        gap: 10px;
+    }
+}
+
+.bordered-tabs {
+    border-bottom: 1px solid #ddd; 
+    margin-bottom: 20px;
+}
+
+.status-message {
+    text-align: center; 
+    color: #888; 
+    padding: 40px;
+}
+
+.btn-past-event {
+    background-color: #555 !important;
+}
+
+.btn-past-event:hover {
+    background-color: #333 !important;
+}
