@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EvenTix - Browse Events</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">EvenTix</div>
+        <div class="nav-links">
+            <span id="user-greeting" class="user-greeting-text"></span>
+            <a href="customer-home.html">Browse</a>
+            <a href="#">My Tickets</a>
+            <button class="nav-btn-outline" onclick="logout()">Log Out</button>
+        </div>
+    </nav>
+
+    <main class="customer-main-container">
+        <h2 class="section-title">Browse Events</h2>
+        <p class="subtitle mb-30">Discover your next unforgettable experience.</p>
+        
+        <div class="tab-container bordered-tabs">
+            <button class="tab-btn active-tab" id="subtab-upcoming" onclick="switchSubTab('upcoming')">Upcoming Events</button>
+            <button class="tab-btn inactive-tab" id="subtab-past" onclick="switchSubTab('past')">Past Events</button>
+        </div>
+
+        <section id="upcoming-grid" class="events-grid"></section>
+        <section id="past-grid" class="events-grid hidden"></section>
+        
+        <p id="status-msg" class="status-message hidden">Loading events...</p>
+    </main>
+
+    <template id="customer-event-card-template">
+        <div class="event-card">
+            <div class="card-header">
+                <h3 class="card-title">Event title</h3>
+            </div>
+            <p class="card-text-sm date-text"><i class="fa-solid fa-calendar text-teal"></i> <span></span></p>
+            <p class="card-text-sm venue-text"><i class="fa-solid fa-location-dot text-teal"></i> <span></span></p>
+            <p class="card-text price-text"><i class="fa-solid fa-ticket text-teal"></i> ₹<span></span></p>
+            <div class="card-actions mt-auto">
+                <a href="#" class="btn primary-btn btn-view-details details-link">View Details</a>
+            </div>
+        </div>
+    </template>
+
+    <script src="js/customer-home.js"></script>
+</body>
+</html>
