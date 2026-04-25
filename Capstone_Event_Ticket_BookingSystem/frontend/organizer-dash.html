@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EvenTix - Organizer Dashboard</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="dashboard-body">
+
+    <nav class="navbar">
+        <div class="logo">EvenTix <span class="logo-highlight">ORGANIZER</span></div>
+        <div class="nav-links">
+            <span id="user-display-name" class="user-name-display"></span>
+            <button class="nav-btn-outline" onclick="logout()">Logout</button>
+        </div>
+    </nav>
+
+    <div class="dashboard-panel">
+        
+        <div class="tab-container">
+            <button class="tab-btn active-tab" id="tab-my-events" onclick="switchMainTab('my-events')">My Events</button>
+            <button class="tab-btn inactive-tab" id="tab-create" onclick="switchMainTab('create')">Create New Event</button>
+        </div>
+
+        <div id="my-events-section">
+            <h2 class="section-title">Manage Your Events</h2>
+            
+            <div class="tab-container" style="border-bottom: 1px solid #ddd; margin-bottom: 20px;">
+                <button class="tab-btn active-tab subtab-font" id="subtab-upcoming" onclick="switchSubTab('upcoming')">Upcoming</button>
+                <button class="tab-btn inactive-tab subtab-font" id="subtab-past" onclick="switchSubTab('past')">Past</button>
+                <button class="tab-btn inactive-tab subtab-font" id="subtab-cancelled" onclick="switchSubTab('cancelled')">Cancelled</button>
+            </div>
+
+            <div id="upcoming-grid" class="events-grid"></div>
+            <div id="past-grid" class="events-grid hidden"></div>
+            <div id="cancelled-grid" class="events-grid hidden"></div>
+            
+            <div id="no-events-msg" class="hidden">
+                <p class="empty-msg">No events found in this category.</p>            
+            </div>
+        </div>
+
+        <div id="create-section" class="hidden">
+            <h2 class="section-title">Create New Event</h2>
+            <form id="create-event-form">
+                <div class="input-group"><label for="event-title">Event Title</label><input type="text" id="event-title" required></div>
+                <div class="input-group"><label for="event-desc">Description</label><input type="text" id="event-desc" required></div>
+                <div class="form-row">
+                    <div class="input-group flex-1"><label for="event-date">Date & Time</label><input type="datetime-local" id="event-date" required></div>
+                    <div class="input-group flex-1"><label for="event-location">Location</label><input type="text" id="event-location" required></div>
+                </div>
+                <div class="form-row">
+                    <div class="input-group flex-1"><label for="event-price">Ticket Price (₹)</label><input type="number" id="event-price" required min="0" step="0.01"></div>
+                    <div class="input-group flex-1"><label for="event-tickets">Total Tickets</label><input type="number" id="event-tickets" required min="1"></div>
+                </div>
+                <div id="event-error" class="error-msg hidden"></div>
+                <div id="event-success" class="success-msg hidden"></div>
+                <button type="submit" class="btn primary-btn">Publish Event</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="update-modal" class="modal-backdrop hidden">
+        <div class="auth-wrapper relative modal-box">
+            <button class="close-modal-btn" onclick="closeUpdateModal()">✕</button>
+            <h2>Update Event</h2>
+            <form id="update-event-form" class="modal-form">
+                <input type="hidden" id="update-event-id">
+                <div class="input-group"><label for="upd-title">Title</label><input type="text" id="upd-title" required></div>
+                <div class="input-group"><label for="upd-desc">Description</label><input type="text" id="upd-desc" required></div>
+                <div class="form-row-sm">
+                    <div class="input-group flex-1"><label for="upd-date">Date & Time</label><input type="datetime-local" id="upd-date" required></div>
+                    <div class="input-group flex-1"><label for="upd-location">Location</label><input type="text" id="upd-location" required></div>
+                </div>
+                <div class="form-row-sm">
+                    <div class="input-group flex-1"><label for="upd-price">Price (₹)</label><input type="number" id="upd-price" required min="0" step="0.01"></div>
+                    <div class="input-group flex-1"><label for="upd-tickets">Total Tickets</label><input type="number" id="upd-tickets" required min="1"></div>
+                </div>
+                <div id="upd-error" class="error-msg hidden"></div>
+                <button type="submit" class="btn primary-btn">Save Changes</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="details-modal" class="modal-backdrop hidden">
+        <div class="auth-wrapper relative modal-box-lg">
+            <button class="close-modal-btn" onclick="closeDetailsModal()">✕</button>
+            
+            <div class="modal-header-flex">
+                <h2 id="det-title" class="modal-title-m0">Event Details</h2>
+                <span id="det-status" class="badge badge-rounded"></span>
+            </div>
+            
+            <div class="details-box">
+                <p id="det-desc" class="details-desc"></p>
+                <div class="details-grid">
+                    <div><strong class="details-label">DATE & TIME</strong><span id="det-date" class="details-val"></span></div>
+                    <div><strong class="details-label">VENUE</strong><span id="det-venue" class="details-val"></span></div>
+                    <div><strong class="details-label">TICKET PRICE</strong><span class="details-val">₹<span id="det-price"></span></span></div>
+                    <div><strong class="details-label">CAPACITY</strong><span id="det-avail" class="details-val-highlight"></span> / <span id="det-total" class="details-val"></span> Available</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <template id="event-card-template">
+        <div class="event-card">
+            <div class="card-header">
+                <h3 class="card-title" aria-label="Event title">Event Title</h3>
+            </div>
+            <p class="card-text-sm date-text"><i class="fa-solid fa-calendar text-teal"></i> <span></span></p>
+            <p class="card-text-sm venue-text"><i class="fa-solid fa-location-dot text-teal"></i> <span></span></p>
+            <p class="card-text price-text"><i class="fa-solid fa-ticket text-teal"></i> ₹<span></span></p>
+            <p class="card-text seats-text"><i class="fa-solid fa-users text-teal"></i> <span></span></p>
+            <div class="card-actions">
+                </div>
+        </div>
+    </template>
+
+    <script src="js/organizer.js"></script>
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Event Details - EvenTix</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo">EvenTix</div>
+        <div class="nav-links">
+            <a href="customer-home.html"><i class="fa-solid fa-arrow-left"></i> Back to Events</a>
+            <button class="nav-btn-outline" onclick="logout()">Log Out</button>
+        </div>
+    </nav>
+
+    <main class="customer-main-container">
+        <div id="details-loading" class="text-center">Loading event details...</div>
+        
+        <article id="event-content" class="dashboard-panel hidden">
+            <div class="modal-header-flex">
+                <h1 id="detail-title" class="section-title" aria-label="Event Details">Event Details</h1>
+                <span id="detail-status"></span>
+            </div>
+            
+            <div class="details-box">
+                <div class="details-grid">
+                    <div><strong class="details-label"><i class="fa-solid fa-calendar text-teal"></i> DATE & TIME</strong><span id="detail-date" class="details-val"></span></div>
+                    <div><strong class="details-label"><i class="fa-solid fa-location-dot text-teal"></i> VENUE</strong><span id="detail-location" class="details-val"></span></div>
+                    <div><strong class="details-label"><i class="fa-solid fa-ticket text-teal"></i> PRICE</strong><span class="details-val">₹<span id="detail-price"></span></span></div>
+                    <div><strong class="details-label"><i class="fa-solid fa-users text-teal"></i> AVAILABILITY</strong><span id="detail-seats" class="details-val-highlight"></span> Seats Left</div>
+                </div>
+            </div>
+            
+            <h3 class="mt-20">About this Event</h3>
+            <p id="detail-description" class="details-desc mt-10"></p>
+
+            <button id="book-ticket-btn" class="btn primary-btn mt-30 btn-lg">Book Tickets</button>
+        </article>
+    </main>
+
+    <script src="js/event-details.js"></script>
+</body>
+</html>
