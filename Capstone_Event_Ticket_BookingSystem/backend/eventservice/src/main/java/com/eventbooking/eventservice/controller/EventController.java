@@ -34,15 +34,18 @@ public class EventController {
         return ResponseEntity.ok(updatedEvent);
     }
 
+    //@RequestParam for the filter
     @GetMapping("/my-events")
-    public ResponseEntity<List<Event>> getMyEvents(Principal principal) {
-        List<Event> myEvents = eventService.getEventsByOrganizer(principal.getName());
+    public ResponseEntity<List<Event>> getMyEvents(
+            @RequestParam(required = false, defaultValue = "all") String filter, 
+            Principal principal) {
+        List<Event> myEvents = eventService.getEventsByOrganizer(principal.getName(), filter);
         return ResponseEntity.ok(myEvents);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Event> getEventById(@PathVariable Long id, Principal principal) {
-        Event event = eventService.getEventById(id, principal.getName());
+    public ResponseEntity<Event> getEventById(@PathVariable Long id) {
+        Event event = eventService.getEventById(id);
         return ResponseEntity.ok(event);
     }
 
@@ -50,5 +53,12 @@ public class EventController {
     public ResponseEntity<Event> cancelEvent(@PathVariable Long id, Principal principal) {
         Event cancelledEvent = eventService.cancelEvent(id, principal.getName());
         return ResponseEntity.ok(cancelledEvent);
+    }
+    //New endpoint to get all events for attendees to see
+    @GetMapping
+    public ResponseEntity<List<Event>> getAllEvents(
+            @RequestParam(required = false, defaultValue = "upcoming") String filter) {
+        List<Event> events = eventService.getAllEvents(filter);
+        return ResponseEntity.ok(events);
     }
 }
