@@ -35,7 +35,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 //to allow hidden options
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .requestMatchers("/api/events/create", "/api/events/update/**", "/api/events/cancel/**")
+                .requestMatchers(HttpMethod.GET,"/api/events\", \"/api/events/**").permitAll()
+                .requestMatchers("/api/events/create", "/api/events/update/**", "/api/events/cancel/**","/api/events/my-events")
                     .hasAnyAuthority("ORGANIZER","ROLE_ORGANIZER")
 
                 .requestMatchers("/api/bookings/**").hasAnyAuthority("CUSTOMER","ROLE_CUSTOMER")
