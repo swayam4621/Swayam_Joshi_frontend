@@ -1,42 +1,69 @@
 package com.eventbooking.eventservice.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "bookings")
-@Data
 public class Booking {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private Long eventId;
     
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "event_id", nullable = false)
-    private Event event;
+    //to store userEmail in customer_email instead of user_email to avoid confusion with organizer email in events table
+    @Column(name = "customer_email")
+    private String userEmail; 
 
-    
-    @Column(nullable = false)
-    private String customerEmail; 
+    private int numberOfTickets;
+    private double totalAmount;
+    private String status; //CONFIRMED or CANCELLED
 
-    @Column(nullable = false)
-    private Integer numberOfTickets;
+    @Column(name = "booking_time")
+    private LocalDateTime bookingDate;
 
-    @Column(nullable = false)
-    private Double totalAmount;
-
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private BookingStatus status = BookingStatus.CONFIRMED;
-
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime bookingTime = LocalDateTime.now();
-
-    public enum BookingStatus {
-        CONFIRMED,
-        CANCELLED
+    public Long getId() {
+        return id;
     }
+    public void setId(Long id) {
+        this.id = id;
+    }
+    public Long getEventId() {
+        return eventId;
+    }
+    public void setEventId(Long eventId) {
+        this.eventId = eventId;
+    }
+    public String getUserEmail() {
+        return userEmail;
+    }
+    public void setUserEmail(String userEmail) {
+        this.userEmail = userEmail;
+    }
+    public int getNumberOfTickets() {
+        return numberOfTickets;
+    }
+    public void setNumberOfTickets(int numberOfTickets) {
+        this.numberOfTickets = numberOfTickets;
+    }
+    public double getTotalAmount() {
+        return totalAmount;
+    }
+    public void setTotalAmount(double totalAmount) {
+        this.totalAmount = totalAmount;
+    }
+    public String getStatus() {
+        return status;
+    }
+    public void setStatus(String status) {
+        this.status = status;
+    }
+    public LocalDateTime getBookingDate() {
+        return bookingDate;
+    }
+    public void setBookingDate(LocalDateTime bookingDate) {
+        this.bookingDate = bookingDate;
+    }
+
 }
