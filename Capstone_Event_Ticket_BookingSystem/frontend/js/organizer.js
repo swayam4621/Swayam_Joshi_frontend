@@ -1,5 +1,6 @@
 const EVENT_API_URL = 'http://localhost:8082/api/events';
 let currentSubTab = 'upcoming';
+let currentEventAttendees = []; //To hold data for the csv file
 
 document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('jwtToken');
@@ -9,6 +10,26 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     document.getElementById('user-display-name').innerText = localStorage.getItem('userEmail');
     fetchMyEvents();
+
+    // Close modals when clicking on backdrop
+    const updateModal = document.getElementById('update-modal');
+    const detailsModal = document.getElementById('details-modal');
+    
+    if (updateModal) {
+        updateModal.addEventListener('click', (e) => {
+            if (e.target === updateModal) {
+                closeUpdateModal();
+            }
+        });
+    }
+    
+    if (detailsModal) {
+        detailsModal.addEventListener('click', (e) => {
+            if (e.target === detailsModal) {
+                closeDetailsModal();
+            }
+        });
+    }
 });
 
 function logout() {
@@ -140,7 +161,9 @@ document.getElementById('create-event-form').addEventListener('submit', async fu
         eventDate: document.getElementById('event-date').value,
         location: document.getElementById('event-location').value,
         price: Number.parseFloat(document.getElementById('event-price').value),
-        totalTickets: Number.parseInt(document.getElementById('event-tickets').value)
+        totalTickets: Number.parseInt(document.getElementById('event-tickets').value),
+        artistName: document.getElementById('event-artist').value, // NEW
+        imageUrl: document.getElementById('event-image').value,
     };
 
     try {
@@ -178,6 +201,8 @@ function openUpdateModal(eventJsonEncoded) {
     document.getElementById('upd-date').value = new Date(event.eventDateTime).toISOString().slice(0, 16);
     document.getElementById('upd-location').value = event.venue;
     document.getElementById('upd-price').value = event.ticketPrice;
+    document.getElementById('upd-image').value = event.imageUrl || '';
+    document.getElementById('upd-artist').value = event.artistName || '';
     document.getElementById('update-modal').classList.remove('hidden');
 }
 
@@ -195,7 +220,9 @@ document.getElementById('update-event-form').addEventListener('submit', async fu
         eventDate: document.getElementById('upd-date').value,
         location: document.getElementById('upd-location').value,
         price: Number.parseFloat(document.getElementById('upd-price').value),
-        totalTickets: Number.parseInt(document.getElementById('upd-tickets').value)
+        totalTickets: Number.parseInt(document.getElementById('upd-tickets').value),
+        imageUrl: document.getElementById('upd-image').value,
+        artistName: document.getElementById('upd-artist').value
     };
 
     try {
@@ -230,7 +257,7 @@ document.getElementById('update-event-form').addEventListener('submit', async fu
 });
 
 //View details of event logic
-function openDetailsModal(eventJsonEncoded) {
+async function openDetailsModal(eventJsonEncoded) {
     const event = JSON.parse(decodeURIComponent(eventJsonEncoded));
     document.getElementById('det-title').innerText = event.name;
     document.getElementById('det-desc').innerText = event.description;
@@ -244,8 +271,82 @@ function openDetailsModal(eventJsonEncoded) {
     statusEl.innerText = event.status;
     statusEl.className = `badge badge-rounded ${event.status === 'ACTIVE' ? 'badge-active' : 'badge-cancelled'}`;
 
+    document.getElementById('det-tickets-sold').innerText = '...';
+    document.getElementById('det-revenue').innerText = '...';
+    document.getElementById('attendee-table-body').innerHTML = '';
+    document.getElementById('no-attendees-msg').classList.add('hidden');
+    currentEventAttendees = []; // Clear previous data
+
     document.getElementById('details-modal').classList.remove('hidden');
+    try {
+        const token = localStorage.getItem('jwtToken');
+        const response = await fetch(`http://localhost:8082/api/bookings/event/${event.id}`, {
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (response.ok) {
+            const bookings = await response.json();
+            currentEventAttendees = bookings; 
+            
+            let totalSold = 0;
+            let totalRevenue = 0;
+            const tbody = document.getElementById('attendee-table-body');
+
+            if (bookings.length === 0) {
+                document.getElementById('no-attendees-msg').classList.remove('hidden');
+                document.getElementById('det-tickets-sold').innerText = '0';
+                document.getElementById('det-revenue').innerText = '0.00';
+            } else {
+                bookings.forEach(b => {
+                    //Calculate totals
+                    totalSold += b.numberOfTickets;
+                    totalRevenue += b.totalAmount;
+                    //add to attendee table
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="padding: 10px; border-bottom: 1px solid #2a2a2a; color: #fff;">${b.userEmail}</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #2a2a2a; color: #fff;">${b.numberOfTickets}</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #2a2a2a; color: #fff;">₹${b.totalAmount.toFixed(2)}</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #2a2a2a; color: #888;">${new Date(b.bookingDate).toLocaleDateString()}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+
+                document.getElementById('det-tickets-sold').innerText = totalSold;
+                document.getElementById('det-revenue').innerText = totalRevenue.toFixed(2);
+            }
+        }
+    } catch (error) {
+        console.error("Failed to load analytics:", error);
+    }
 }
+
+//csv download
+document.getElementById('download-csv-btn').addEventListener('click', () => {
+    if (currentEventAttendees.length === 0) {
+        alert("There are no attendees to download for this event.");
+        return;
+    }
+
+    //create the CSV Headers
+    let csvContent = "Customer Email,Tickets Bought,Total Paid (INR),Booking Date,Status\n";
+    
+    //Loop through data and append rows
+    currentEventAttendees.forEach(b => {
+        const dateStr = new Date(b.bookingDate).toLocaleString().replace(/,/g, ''); 
+        csvContent += `${b.userEmail},${b.numberOfTickets},${b.totalAmount},${dateStr},${b.status}\n`;
+    });
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", `attendees_event_${Date.now()}.csv`);
+    document.body.appendChild(link);
+    link.click(); 
+    document.body.removeChild(link);
+});
+
 
 function closeDetailsModal() {
     document.getElementById('details-modal').classList.add('hidden');
