@@ -9,6 +9,8 @@ public class EventRequest {
     private String location;
     private double price;
     private Integer totalTickets;
+    private String imageUrl;
+    private String artistName;
 
     public String getTitle() {
         return title;
@@ -56,5 +58,21 @@ public class EventRequest {
 
     public void setTotalTickets(Integer totalTickets) {
         this.totalTickets = totalTickets;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getArtistName() {
+        return artistName;
+    }
+
+    public void setArtistName(String artistName) {
+        this.artistName = artistName;
     }
 }

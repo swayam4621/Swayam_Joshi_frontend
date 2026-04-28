@@ -28,4 +28,8 @@ public interface EventRepository extends JpaRepository<Event, Long> {
     //Customer view past events
     List<Event> findByStatusAndEventDateTimeBeforeOrderByEventDateTimeDesc(
             Event.EventStatus status, LocalDateTime now);
+
+    //Events with artists for public display
+    List<Event> findByStatusAndEventDateTimeAfterAndArtistNameIsNotNullAndArtistNameNotOrderByEventDateTimeAsc(
+            Event.EventStatus status, LocalDateTime now, String empty);
 }

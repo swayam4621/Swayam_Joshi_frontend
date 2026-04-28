@@ -28,6 +28,8 @@ public class EventService {
         event.setTicketPrice(request.getPrice()); 
         event.setTotalSeats(request.getTotalTickets()); 
         event.setAvailableSeats(request.getTotalTickets()); 
+        event.setImageUrl(request.getImageUrl());
+        event.setArtistName(request.getArtistName());
         
         event.setOrganizerEmail(organizerEmail); 
 
@@ -49,6 +51,8 @@ public class EventService {
         event.setVenue(request.getLocation());
         event.setTicketPrice(request.getPrice());
         event.setTotalSeats(request.getTotalTickets());
+        event.setImageUrl(request.getImageUrl());
+        event.setArtistName(request.getArtistName());
 
         return eventRepository.save(event);
     }
@@ -81,6 +85,10 @@ public class EventService {
         else if ("past".equalsIgnoreCase(filter)) {
             return eventRepository.findByStatusAndEventDateTimeBeforeOrderByEventDateTimeDesc(
                     Event.EventStatus.ACTIVE, now);
+        }
+        else if ("artists".equalsIgnoreCase(filter)) {
+            return eventRepository.findByStatusAndEventDateTimeAfterAndArtistNameIsNotNullAndArtistNameNotOrderByEventDateTimeAsc(
+                    Event.EventStatus.ACTIVE, now, "");
         }
         //fallback
         return eventRepository.findAll();

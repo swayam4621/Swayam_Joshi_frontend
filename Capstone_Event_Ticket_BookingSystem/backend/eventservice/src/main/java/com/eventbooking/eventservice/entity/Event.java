@@ -49,8 +49,15 @@ public class Event {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
+    @Column(name = "image_url")
+    private String imageUrl;
+
+    @Column(name = "artist_name")
+    private String artistName;
+
     public enum EventStatus {
         ACTIVE,
         CANCELLED_BY_ORGANIZER
     }
+
 }
