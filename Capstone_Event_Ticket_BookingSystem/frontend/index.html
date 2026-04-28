@@ -3,115 +3,155 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EvenTix - Home</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <title>EvenTix - Live Events, Concerts & More</title>
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">   
+    <link rel="stylesheet" href="css/modals.css">   
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
-
-    <nav class="navbar">
+    <nav class="navbar sticky-nav">
         <div class="logo">EvenTix</div>
-        <div class="nav-links">
-            <a href="#">Browse events</a>
-            <a href="#">Help</a>
-            <button class="nav-btn-outline" onclick="openAuthModal()">Sign In</button>
+        
+        <div id="nav-logged-out" class="nav-links">
+            <button type="button" class="text-btn text-white" id="nav-login-btn">Log In</button>
+            <button type="button" class="nav-btn-outline" id="nav-signup-btn">Sign Up</button>
+        </div>
+
+        <div id="nav-logged-in" class="nav-links hidden">
+            <span id="user-greeting" class="user-greeting-text"></span>
+            <a href="index.html" class="nav-link-item">Browse</a>
+            <a href="#" class="nav-link-item">My Tickets</a>
+            <button type="button" class="nav-btn-outline" id="nav-logout-btn">Log Out</button>
         </div>
     </nav>
 
-    <section class="hero-section">
-        <div class="hero-content">
-            <h1>Unlock the stage to<br><span class="highlight-text">unforgettable sounds.</span></h1>
-            
-            <div class="search-bar">
-                <input type="text" placeholder="Search for event">
-                <button class="search-btn"><i class="fa-solid fa-magnifying-glass"></i></button>
-            </div>
-            
-            <p class="hero-subtext">
-                Get tickets to gigs, parties and festivals<br>
-                for the <span class="highlight-text">best price</span> in the market.
-            </p>
-        </div>
+    <section class="hero-carousel-container">
+        <div id="hero-carousel" class="hero-carousel"></div>
+        <div id="carousel-dots" class="carousel-dots"></div>
     </section>
 
-    <section class="categories-section">
-        <div class="category-grid">
-            <div class="category-card"><i class="fa-solid fa-music text-teal"></i> Concerts</div>
-            <div class="category-card"><i class="fa-solid fa-image text-teal"></i> Exhibitions</div>
-            <div class="category-card"><i class="fa-solid fa-campground text-teal"></i> Festivals</div>
-            <div class="category-card"><i class="fa-solid fa-glass-cheers text-teal"></i> Parties</div>
-            <div class="category-card"><i class="fa-solid fa-film text-teal"></i> Movies</div>
-            <div class="category-card"><i class="fa-solid fa-utensils text-teal"></i> Culinary</div>
-            <div class="category-card"><i class="fa-solid fa-running text-teal"></i> Sports</div>
-            <div class="category-card"><i class="fa-solid fa-child text-teal"></i> Kids</div>
+    <main class="customer-main-container pt-20">
+        
+        <h3 class="section-heading">Categories available on EvenTix</h3>
+        <div class="scroll-container category-scroll">
+            <div class="category-pill"><i class="fa-solid fa-music"></i> Music</div>
+            <div class="category-pill"><i class="fa-solid fa-moon"></i> Nightlife</div>
+            <div class="category-pill"><i class="fa-solid fa-microphone"></i> Comedy</div>
+            <div class="category-pill"><i class="fa-solid fa-trophy"></i> Sports</div>
+            <div class="category-pill"><i class="fa-solid fa-masks-theater"></i> Performances</div>
+            <div class="category-pill"><i class="fa-solid fa-utensils"></i> Food & Drinks</div>
+            <div class="category-pill"><i class="fa-solid fa-dumbbell"></i> Fitness</div>
         </div>
-    </section>
 
-    <div id="auth-modal" class="modal-backdrop hidden">
-        <div class="auth-wrapper relative">
-            <button class="close-modal-btn" onclick="closeAuthModal()"><i class="fa-solid fa-xmark"></i></button>
-            
-            <div class="auth-branding">
-                <h2>EvenTix</h2>
-                <p>Your gateway to unforgettable experiences.</p>
+        <h3 id="artists-heading" class="section-heading mt-30">Artists near you</h3>
+        <div id="dynamic-artists-container" class="scroll-container artist-scroll"></div>
+
+        <h3 class="section-heading mt-30">All events</h3>
+        <div class="scroll-container filter-scroll mb-20">
+            <button class="filter-btn"><i class="fa-solid fa-sliders"></i> Filters</button>
+            <button class="filter-btn">Today</button>
+            <button class="filter-btn">Tomorrow</button>
+            <button class="filter-btn">This Weekend</button>
+            <button class="filter-btn">Music</button>
+        </div>
+
+        <div id="public-events-grid" class="district-grid">
+            <p id="loading-msg" class="status-message">Loading amazing events...</p>
+        </div>
+    </main>
+
+    <template id="public-event-card-template">
+        <div class="district-card">
+            <img class="card-img" src="https://images.unsplash.com/photo-1540039155732-6847350357a0?w=600" alt="Event Cover">
+            <div class="card-body">
+                <p class="card-date date-text"></p>
+                <h3 class="card-title"></h3>
+                <p class="card-venue venue-text"></p>
+                <p class="card-price price-text">₹<span></span> onwards</p>
+                <button type="button" class="btn primary-btn mt-10 w-100 book-tickets-btn">Book Tickets</button>
             </div>
+        </div>
+    </template>
 
-            <div class="auth-forms">
-                <div id="login-section" class="auth-box">
-                    <h2>Welcome Back</h2>
-                    <p class="subtitle">Login to book your next experience</p>
-                    <form id="login-form">
-                        <div class="input-group">
-                            <label>Email Address</label>
-                            <input type="email" id="login-email" required placeholder="Enter your email">
-                        </div>
-                        <div class="input-group">
-                            <label>Password</label>
-                            <input type="password" id="login-password" required placeholder="Enter your password">
-                        </div>
-                        <div id="login-error" class="error-msg hidden"></div>
-                        <button type="submit" class="btn primary-btn">Login</button>
-                    </form>
-                    <p class="switch-form">Don't have an account? <button type="button" class="text-btn" onclick="toggleForms()">Register here</button></p>
-                </div>
+    <template id="hero-slide-template">
+        <div class="hero-slide">
+            <div class="slide-overlay">
+                <h1 class="slide-title"></h1>
+                <p class="slide-subtitle"></p>
+            </div>
+        </div>
+    </template>
 
-                <div id="register-section" class="auth-box hidden">
-                    <h2>Create an Account</h2>
-                    <p class="subtitle">Join as a Customer or Organizer</p>
-                    <form id="register-form">
-                        <div class="input-group">
-                            <label>Full Name</label>
-                            <input type="text" id="reg-name" required placeholder="Your full name">
-                        </div>
-                        <div class="input-group">
-                            <label>Email</label>
-                            <input type="email" id="reg-email" required placeholder="Your email address">
-                        </div>
-                        <div class="input-group">
-                            <label>Phone</label>
-                            <input type="text" id="reg-phone" required placeholder="Your phone number">
-                        </div>
-                        <div class="input-group">
-                            <label>Password</label>
-                            <input type="password" id="reg-password" required placeholder="Min 8 chars, 1 uppercase, 1 special">
-                        </div>
-                        <div class="input-group">
-                            <label>Role</label>
-                            <select id="reg-role" required>
-                                <option value="CUSTOMER">Book Tickets (Customer)</option>
-                                <option value="ORGANIZER">Create Events (Organizer)</option>
-                            </select>
-                        </div>
-                        <div id="reg-error" class="error-msg hidden"></div>
-                        <div id="reg-success" class="success-msg hidden"></div>
-                        <button type="submit" class="btn primary-btn">Register</button>
-                    </form>
-                    <p class="switch-form">Already have an account? <button type="button" class="text-btn" onclick="toggleForms()">Login here</button></p>
-                </div>
+    <template id="artist-item-template">
+        <div class="artist-item">
+            <img class="artist-img" src="" alt="">
+            <p class="artist-name"></p>
+        </div>
+    </template>
+
+    <div id="login-modal" class="modal-backdrop hidden">
+        <div class="auth-wrapper relative modal-box">
+            <button class="close-modal-btn" onclick="closeAuthModals()">✕</button>
+            <div class="auth-forms full-width-form">
+                <h2>Welcome Back</h2>
+                <p class="subtitle">Log in to book tickets and manage events.</p>
+                <form id="login-form">
+                    <div class="input-group">
+                        <label>Email</label>
+                        <input type="email" id="login-email" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Password</label>
+                        <input type="password" id="login-password" required>
+                    </div>
+                    <div id="login-error" class="error-msg hidden"></div>
+                    <button type="submit" class="btn primary-btn">Log In</button>
+                    <p class="switch-form">Don't have an account? <button type="button" class="text-btn" onclick="openSignupModal()">Sign up</button></p>
+                </form>
             </div>
         </div>
     </div>
 
-    <script src="js/auth.js"></script>
+    <div id="signup-modal" class="modal-backdrop hidden">
+        <div class="auth-wrapper relative modal-box">
+            <button class="close-modal-btn" onclick="closeAuthModals()">✕</button>
+            <div class="auth-forms full-width-form">
+                <h2>Create Account</h2>
+                <p class="subtitle">Join EvenTix today.</p>
+                <form id="signup-form">
+                    <div class="input-group">
+                        <label>Full Name</label>
+                        <input type="text" id="signup-name" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Phone Number</label>
+                        <input type="tel" id="signup-phone" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Email</label>
+                        <input type="email" id="signup-email" required>
+                    </div>
+                    <div class="input-group">
+                        <label>Password</label>
+                        <input type="password" id="signup-password" required>
+                    </div>
+                    <div class="input-group">
+                        <label>I am a...</label>
+                        <select id="signup-role">
+                            <option value="CUSTOMER">Customer (Buying Tickets)</option>
+                            <option value="ORGANIZER">Organizer (Hosting Events)</option>
+                        </select>
+                    </div>
+                    <div id="signup-error" class="error-msg hidden"></div>
+                    <div id="signup-success" class="success-msg hidden"></div>
+                    <button type="submit" class="btn primary-btn">Sign Up</button>
+                    <p class="switch-form">Already have an account? <button type="button" class="text-btn" onclick="openLoginModal()">Log in</button></p>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/index.js?v=3"></script>
 </body>
 </html>
