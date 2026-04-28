@@ -7,40 +7,115 @@
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
-<body>
-    <nav class="navbar">
+<body class="event-details-page-view">
+
+    <nav class="navbar sticky-nav">
         <div class="logo">EvenTix</div>
         <div class="nav-links">
-            <a href="customer-home.html"><i class="fa-solid fa-arrow-left"></i> Back to Events</a>
+            <a href="index.html" class="nav-link-item"><i class="fa-solid fa-arrow-left"></i> Back to Events</a>
             <button class="nav-btn-outline" onclick="logout()">Log Out</button>
         </div>
     </nav>
 
-    <main class="customer-main-container">
-        <div id="details-loading" class="text-center">Loading event details...</div>
+    <main class="customer-main-container pt-20">
+        <div id="details-loading" class="status-message">Loading event details...</div>
         
-        <article id="event-content" class="dashboard-panel hidden">
-            <div class="modal-header-flex">
-                <h1 id="detail-title" class="section-title" aria-label="Event Details">Event Details</h1>
-                <span id="detail-status"></span>
-            </div>
-            
-            <div class="details-box">
-                <div class="details-grid">
-                    <div><strong class="details-label"><i class="fa-solid fa-calendar text-teal"></i> DATE & TIME</strong><span id="detail-date" class="details-val"></span></div>
-                    <div><strong class="details-label"><i class="fa-solid fa-location-dot text-teal"></i> VENUE</strong><span id="detail-location" class="details-val"></span></div>
-                    <div><strong class="details-label"><i class="fa-solid fa-ticket text-teal"></i> PRICE</strong><span class="details-val">₹<span id="detail-price"></span></span></div>
-                    <div><strong class="details-label"><i class="fa-solid fa-users text-teal"></i> AVAILABILITY</strong><span id="detail-seats" class="details-val-highlight"></span> Seats Left</div>
+        <article id="event-content" class="hidden">
+            <div class="event-details-layout">
+                
+                <div class="event-poster-col">
+                    <img id="detail-image" src="" alt="Event Poster" class="event-detail-img">
+                </div>
+                
+                <div class="event-info-col district-card">
+                    <div class="modal-header-flex">
+                        <h1 id="detail-title" class="section-title mb-0"></h1>
+                        <span id="detail-status"></span>
+                    </div>
+                    
+                    <div class="details-grid mt-20">
+                        <div class="detail-item">
+                            <strong class="details-label"><i class="fa-solid fa-calendar text-teal"></i> DATE & TIME</strong>
+                            <span id="detail-date" class="details-val text-white"></span>
+                        </div>
+                        <div class="detail-item">
+                            <strong class="details-label"><i class="fa-solid fa-location-dot text-teal"></i> VENUE</strong>
+                            <span id="detail-location" class="details-val text-white"></span>
+                        </div>
+                        <div class="detail-item">
+                            <strong class="details-label"><i class="fa-solid fa-ticket text-teal"></i> PRICE</strong>
+                            <span class="details-val text-white">₹<span id="detail-price"></span></span>
+                        </div>
+                        <div class="detail-item">
+                            <strong class="details-label"><i class="fa-solid fa-users text-teal"></i> AVAILABILITY</strong>
+                            <span class="details-val text-white"><span id="detail-seats" class="details-val-highlight"></span> Seats Left</span>
+                        </div>
+                    </div>
+                    
+                    <div class="about-section mt-30">
+                        <h3 class="text-white">About this Event</h3>
+                        <p id="detail-description" class="details-desc mt-10"></p>
+                    </div>
+
+                    <button id="book-ticket-btn" class="btn primary-btn mt-auto w-100 btn-lg">Book Tickets</button>
                 </div>
             </div>
-            
-            <h3 class="mt-20">About this Event</h3>
-            <p id="detail-description" class="details-desc mt-10"></p>
-
-            <button id="book-ticket-btn" class="btn primary-btn mt-30 btn-lg">Book Tickets</button>
         </article>
     </main>
+    
+    <div id="payment-modal" class="modal-backdrop hidden">
+        <div class="auth-wrapper relative modal-box" style="max-width: 450px;">
+            <button class="close-modal-btn" onclick="closePaymentModal()">✕</button>
+            <div class="auth-forms full-width-form">
+                <h2>Complete Booking</h2>
+                <p class="subtitle" id="payment-event-name">Event Name</p>
+                
+                <form id="payment-form">
+                    <div class="input-group">
+                        <label for="ticket-quantity">Number of Tickets</label>
+                        <select id="ticket-quantity" required onchange="calculateTotal()">
+                            <option value="1">1 Ticket</option>
+                            <option value="2">2 Tickets</option>
+                            <option value="3">3 Tickets</option>
+                            <option value="4">4 Tickets</option>
+                            <option value="5">5 Tickets</option>
+                        </select>
+                    </div>
 
-    <script src="js/event-details.js"></script>
+                    <div class="details-grid mt-10 mb-20" style="padding: 10px; background: #121212; border-radius: 8px;">
+                        <div style="display: flex; justify-content: space-between; width: 100%;">
+                            <span class="text-white">Total Amount:</span>
+                            <span class="text-teal" style="font-weight: bold; font-size: 1.2rem;">₹<span id="payment-total">0</span></span>
+                        </div>
+                    </div>
+
+                    <div class="input-group">
+                        <label>Card Number</label>
+                        <input type="text" placeholder="XXXX XXXX XXXX XXXX" maxlength="19" required>
+                    </div>
+                    <div style="display: flex; gap: 10px;">
+                        <div class="input-group flex-1">
+                            <label>Expiry</label>
+                            <input type="text" placeholder="MM/YY" maxlength="5" required>
+                        </div>
+                        <div class="input-group flex-1">
+                            <label>CVV</label>
+                            <input type="password" placeholder="XXX" maxlength="3" required>
+                        </div>
+                    </div>
+
+                    <div id="payment-error" class="error-msg hidden"></div>
+                    <div id="payment-success" class="success-msg hidden"></div>
+                    
+                    <button type="submit" id="pay-btn" class="btn primary-btn mt-10">
+                        <span id="pay-btn-text">Pay Now</span>
+                        <i id="pay-spinner" class="fa-solid fa-circle-notch fa-spin hidden"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/event-details.js?v=3"></script>
 </body>
 </html>

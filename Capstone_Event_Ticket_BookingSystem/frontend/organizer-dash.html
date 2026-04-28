@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EvenTix - Organizer Dashboard</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/styles.css?v=2">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="dashboard-body">
@@ -27,7 +27,7 @@
         <div id="my-events-section">
             <h2 class="section-title">Manage Your Events</h2>
             
-            <div class="tab-container" style="border-bottom: 1px solid #ddd; margin-bottom: 20px;">
+            <div class="tab-container" style="border-bottom: 1px solid var(--border-color); margin-bottom: 20px;">
                 <button class="tab-btn active-tab subtab-font" id="subtab-upcoming" onclick="switchSubTab('upcoming')">Upcoming</button>
                 <button class="tab-btn inactive-tab subtab-font" id="subtab-past" onclick="switchSubTab('past')">Past</button>
                 <button class="tab-btn inactive-tab subtab-font" id="subtab-cancelled" onclick="switchSubTab('cancelled')">Cancelled</button>
@@ -55,6 +55,16 @@
                     <div class="input-group flex-1"><label for="event-price">Ticket Price (₹)</label><input type="number" id="event-price" required min="0" step="0.01"></div>
                     <div class="input-group flex-1"><label for="event-tickets">Total Tickets</label><input type="number" id="event-tickets" required min="1"></div>
                 </div>
+                <div class="form-row">
+                <div class="input-group flex-1">
+                    <label>Artist / Performer Name (Optional)</label>
+                    <input type="text" id="event-artist">
+                </div>
+                <div class="input-group flex-1">
+                    <label>Poster Image URL (Optional)</label>
+                    <input type="url" id="event-image" placeholder="https://...">
+                </div>
+                </div>
                 <div id="event-error" class="error-msg hidden"></div>
                 <div id="event-success" class="success-msg hidden"></div>
                 <button type="submit" class="btn primary-btn">Publish Event</button>
@@ -78,6 +88,8 @@
                     <div class="input-group flex-1"><label for="upd-price">Price (₹)</label><input type="number" id="upd-price" required min="0" step="0.01"></div>
                     <div class="input-group flex-1"><label for="upd-tickets">Total Tickets</label><input type="number" id="upd-tickets" required min="1"></div>
                 </div>
+                <div class="input-group"><label for="upd-image">Image URL (optional)</label><input type="url" id="upd-image" placeholder="https://example.com/image.jpg"></div>
+                <div class="input-group"><label for="upd-artist">Artist Name (optional)</label><input type="text" id="upd-artist" placeholder="Artist or Performer"></div>
                 <div id="upd-error" class="error-msg hidden"></div>
                 <button type="submit" class="btn primary-btn">Save Changes</button>
             </form>
@@ -101,6 +113,36 @@
                     <div><strong class="details-label">TICKET PRICE</strong><span class="details-val">₹<span id="det-price"></span></span></div>
                     <div><strong class="details-label">CAPACITY</strong><span id="det-avail" class="details-val-highlight"></span> / <span id="det-total" class="details-val"></span> Available</div>
                 </div>
+
+                <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid #333;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h3 style="margin: 0; font-size: 1.2rem;">Attendee Analytics</h3>
+                        <button id="download-csv-btn" class="btn primary-btn" style="padding: 6px 12px; font-size: 0.85rem; border-radius: 4px;">
+                            <i class="fa-solid fa-download"></i> Download CSV
+                        </button>
+                    </div>
+                    
+                    <div class="details-grid" style="margin-bottom: 15px; background: #121212; padding: 10px; border-radius: 6px;">
+                        <div><strong class="details-label">TICKETS SOLD</strong><span id="det-tickets-sold" class="details-val text-teal">0</span></div>
+                        <div><strong class="details-label">TOTAL REVENUE</strong><span class="details-val text-teal">₹<span id="det-revenue">0.00</span></span></div>
+                    </div>
+                    
+                    <div style="max-height: 200px; overflow-y: auto; border: 1px solid #333; border-radius: 6px;">
+                        <table style="width: 100%; text-align: left; border-collapse: collapse; font-size: 0.9rem;">
+                            <thead style="background: #1e1e1e; position: sticky; top: 0;">
+                                <tr>
+                                    <th style="padding: 10px; border-bottom: 1px solid #333; color: #888;">Email</th>
+                                    <th style="padding: 10px; border-bottom: 1px solid #333; color: #888;">Tickets</th>
+                                    <th style="padding: 10px; border-bottom: 1px solid #333; color: #888;">Amount</th>
+                                    <th style="padding: 10px; border-bottom: 1px solid #333; color: #888;">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="attendee-table-body">
+                                </tbody>
+                        </table>
+                        <p id="no-attendees-msg" class="hidden" style="text-align: center; padding: 15px; color: #888; margin: 0;">No tickets sold yet.</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -119,6 +161,6 @@
         </div>
     </template>
 
-    <script src="js/organizer.js"></script>
+    <script src="js/organizer.js?v=2"></script>
 </body>
 </html>
