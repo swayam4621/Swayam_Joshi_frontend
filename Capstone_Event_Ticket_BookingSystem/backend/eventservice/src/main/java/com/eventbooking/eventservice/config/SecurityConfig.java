@@ -31,15 +31,20 @@ public class SecurityConfig {
         http
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
-            .csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(auth -> auth
+                .csrf(csrf -> csrf.disable())            
+                .authorizeHttpRequests(auth -> auth
                 //to allow hidden options
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                .requestMatchers(HttpMethod.GET,"/api/events\", \"/api/events/**").permitAll()
+
+                .requestMatchers("/error").permitAll()
+
                 .requestMatchers("/api/events/create", "/api/events/update/**", "/api/events/cancel/**","/api/events/my-events")
                     .hasAnyAuthority("ORGANIZER","ROLE_ORGANIZER")
+                
+                    .requestMatchers(HttpMethod.GET, "/api/events", "/api/events/{id}").permitAll()
 
-                .requestMatchers("/api/bookings/**").hasAnyAuthority("CUSTOMER","ROLE_CUSTOMER")
+                .requestMatchers("/api/bookings/create").hasAnyAuthority("CUSTOMER", "ROLE_CUSTOMER")
+                .requestMatchers("/api/bookings/event/**").hasAnyAuthority("ORGANIZER", "ROLE_ORGANIZER")
 
                 .anyRequest().authenticated()
             )
