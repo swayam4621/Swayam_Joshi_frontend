@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/components.css">
     <link rel="stylesheet" href="css/modals.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 <body class="event-details-page-view">
 
@@ -24,7 +25,6 @@
         
         <article id="event-content" class="hidden">
             <div class="event-details-layout">
-                
                 <div class="event-poster-col">
                     <img id="detail-image" src="" alt="Event Poster" class="event-detail-img">
                 </div>
@@ -32,7 +32,7 @@
                 <div class="event-info-col district-card">
                     <div class="modal-header-flex">
                         <h1 id="detail-title" class="section-title mb-0"></h1>
-                        <span id="detail-status"></span>
+                        <span id="detail-status" class="badge"></span>
                     </div>
                     
                     <div class="details-grid mt-20">
@@ -59,7 +59,7 @@
                         <p id="detail-description" class="details-desc mt-10"></p>
                     </div>
 
-                    <button id="book-ticket-btn" class="btn primary-btn mt-auto w-100 btn-lg">Book Tickets</button>
+                    <button id="book-ticket-btn" class="btn primary-btn mt-auto w-100 btn-lg" onclick="openPaymentModal()">Book Tickets</button>
                 </div>
             </div>
         </article>
@@ -95,7 +95,7 @@
                         <label>Card Number</label>
                         <input type="text" placeholder="XXXX XXXX XXXX XXXX" maxlength="19" required>
                     </div>
-                    <div style="display: flex; gap: 10px;">
+                    <div class="form-row-sm">
                         <div class="input-group flex-1">
                             <label>Expiry</label>
                             <input type="text" placeholder="MM/YY" maxlength="5" required>
@@ -107,7 +107,6 @@
                     </div>
 
                     <div id="payment-error" class="error-msg hidden"></div>
-                    <div id="payment-success" class="success-msg hidden"></div>
                     
                     <button type="submit" id="pay-btn" class="btn primary-btn mt-10">
                         <span id="pay-btn-text">Pay Now</span>
@@ -118,6 +117,21 @@
         </div>
     </div>
 
-    <script src="js/event-details.js?v=3"></script>
+    <div id="booking-success-modal" class="modal-backdrop hidden">
+        <div class="modal-box success-modal-content">
+            <button class="close-modal-btn" onclick="closeSuccessModal()">✕</button>
+            
+            <i class="fa-solid fa-circle-check success-check-icon"></i>
+            
+            <h2 class="modal-title-m0 mb-10 success-title">Booking Confirmed!</h2>
+            <p class="details-desc mb-30 success-event-text" id="success-event-name"></p>
+            
+            <button class="btn primary-btn" onclick="globalThis.location.href='my-bookings.html'">
+                View My Tickets
+            </button>
+        </div>
+    </div>
+
+    <script src="js/event-details.js?v=999"></script>
 </body>
 </html>
