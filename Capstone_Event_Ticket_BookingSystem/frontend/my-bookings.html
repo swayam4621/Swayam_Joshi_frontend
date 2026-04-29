@@ -51,16 +51,20 @@
     <template id="booking-card-template">
         <div class="event-card">
             <div class="card-header">
-                <h3 class="card-title booking-event-name"></h3>
+                <h3 class="card-title booking-event-name">Event name</h3>
                 <span class="booking-confirmed-badge">CONFIRMED</span>
             </div>
             <p class="card-text-sm date-text mb-10"><i class="fa-solid fa-calendar text-teal"></i> <span class="booking-date-val"></span></p>
             <p class="card-text price-text mb-10"><i class="fa-solid fa-ticket text-teal"></i> <span class="booking-qty-val"></span> Ticket(s)</p>
             <p class="card-text seats-text mb-20"><i class="fa-solid fa-credit-card text-teal"></i> ₹<span class="booking-price-val"></span> Paid</p>
-            
+            <div class="btn-group-row mt-auto">
+                <button class="btn btn-cancel btn-cancel-booking" style="flex: 1;">
+                    <i class="fa-solid fa-xmark"></i> Cancel
+                </button>
             <button class="btn primary-btn mt-auto btn-view-qr">
                 <i class="fa-solid fa-qrcode"></i> View Entry Ticket
             </button>
+            </div>
         </div>
     </template>
 
