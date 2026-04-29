@@ -43,7 +43,7 @@ public class SecurityConfig {
                 
                     .requestMatchers(HttpMethod.GET, "/api/events", "/api/events/{id}").permitAll()
 
-                .requestMatchers("/api/bookings/create").hasAnyAuthority("CUSTOMER", "ROLE_CUSTOMER")
+                .requestMatchers("/api/bookings/create", "/api/bookings/my-bookings").hasAnyAuthority("CUSTOMER", "ROLE_CUSTOMER")
                 .requestMatchers("/api/bookings/event/**").hasAnyAuthority("ORGANIZER", "ROLE_ORGANIZER")
 
                 .anyRequest().authenticated()
