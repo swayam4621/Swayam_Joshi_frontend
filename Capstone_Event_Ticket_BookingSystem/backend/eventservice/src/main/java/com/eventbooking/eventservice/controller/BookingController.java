@@ -73,4 +73,15 @@ public class BookingController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"error\": \"Could not fetch attendees\"}");
         }
     }
+
+    @GetMapping("/my-bookings")
+    public ResponseEntity<?> getMyBookings(java.security.Principal principal) {
+        try {
+            String email = principal.getName();
+            List<Booking> myBookings = bookingRepository.findByUserEmail(email);
+            return ResponseEntity.ok(myBookings);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"error\": \"Could not fetch bookings\"}");
+        }
+    }
 }
