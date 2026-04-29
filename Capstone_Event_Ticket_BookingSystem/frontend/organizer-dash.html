@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EvenTix - Organizer Dashboard</title>
-    <link rel="stylesheet" href="css/styles.css?v=2">
+    <link rel="stylesheet" href="css/base.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/modals.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body class="dashboard-body">
@@ -19,13 +21,13 @@
 
     <div class="dashboard-panel">
         
-        <div class="tab-container">
+        <div class="tab-container mb-30">
             <button class="tab-btn active-tab" id="tab-my-events" onclick="switchMainTab('my-events')">My Events</button>
             <button class="tab-btn inactive-tab" id="tab-create" onclick="switchMainTab('create')">Create New Event</button>
         </div>
 
         <div id="my-events-section">
-            <h2 class="section-title">Manage Your Events</h2>
+            <h2 class="section-title mb-20">Manage Your Events</h2>
             
             <div class="tab-container" style="border-bottom: 1px solid var(--border-color); margin-bottom: 20px;">
                 <button class="tab-btn active-tab subtab-font" id="subtab-upcoming" onclick="switchSubTab('upcoming')">Upcoming</button>
@@ -155,7 +157,7 @@
             <p class="card-text-sm date-text"><i class="fa-solid fa-calendar text-teal"></i> <span></span></p>
             <p class="card-text-sm venue-text"><i class="fa-solid fa-location-dot text-teal"></i> <span></span></p>
             <p class="card-text price-text"><i class="fa-solid fa-ticket text-teal"></i> ₹<span></span></p>
-            <p class="card-text seats-text"><i class="fa-solid fa-users text-teal"></i> <span></span></p>
+            <p class="card-text seats-text mb-20"><i class="fa-solid fa-users text-teal"></i> <span></span></p>
             <div class="card-actions">
                 </div>
         </div>
