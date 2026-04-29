@@ -1,4 +1,9 @@
 const EVENT_API_URL = 'http://localhost:8082/api/events';
+const BOOKING_API_URL = 'http://localhost:8082/api/bookings';
+
+let currentEventId = null;
+let currentEventPrice = 0;
+let currentEventName = '';
 
 document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('jwtToken');
@@ -31,7 +36,7 @@ async function loadEventDetails() {
                 'Content-Type': 'application/json'
             }
         });
-        
+
         if (!response.ok) {
             if (response.status === 404) throw new Error("Event not found");
             throw new Error("Failed to load details");
@@ -39,12 +44,14 @@ async function loadEventDetails() {
 
         const event = await response.json();
 
+        currentEventName = event.name;
+
         document.getElementById('detail-title').textContent = event.name;
         document.getElementById('detail-location').textContent = event.venue;
         document.getElementById('detail-price').textContent = event.ticketPrice;
         document.getElementById('detail-seats').textContent = event.availableSeats;
         document.getElementById('detail-description').textContent = event.description || "No description provided by the organizer.";
-        
+
         const dateOptions = { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' };
         document.getElementById('detail-date').textContent = new Date(event.eventDateTime).toLocaleString('en-US', dateOptions);
 
@@ -77,7 +84,7 @@ async function loadEventDetails() {
             bookBtn.classList.add('btn-disabled');
         } else {
             bookBtn.addEventListener('click', () => {
-                alert(`Proceeding to checkout for ${event.name}!`);
+                openPaymentModal(eventId, event.name, event.ticketPrice);
             });
         }
 
@@ -89,28 +96,30 @@ async function loadEventDetails() {
     }
 }
 
-// --- MOCK PAYMENT LOGIC ---
-const BOOKING_API_URL = 'http://localhost:8082/api/bookings';
-
-let currentEventPrice = 0;
-let currentEventId = null;
 
 function openPaymentModal(eventId, eventName, ticketPrice) {
     currentEventId = eventId;
     currentEventPrice = ticketPrice;
-    
+    currentEventName = eventName;
+
     document.getElementById('payment-event-name').textContent = eventName;
     document.getElementById('ticket-quantity').value = "1";
     calculateTotal();
-    
-    document.getElementById('payment-modal').classList.remove('hidden');
+
+    const paymentModal = document.getElementById('payment-modal');
+    paymentModal.classList.remove('hidden');
+    paymentModal.style.display = 'flex';
 }
 
 function closePaymentModal() {
-    document.getElementById('payment-modal').classList.add('hidden');
+    const paymentModal = document.getElementById('payment-modal');
+    paymentModal.classList.add('hidden');
+    paymentModal.style.display = 'none';
+
     document.getElementById('payment-form').reset();
     document.getElementById('payment-error').classList.add('hidden');
-    document.getElementById('payment-success').classList.add('hidden');
+    document.getElementById('payment-success')?.classList.add('hidden');
+    document.getElementById('payment-form').style.display = 'block';
     resetPayButton();
 }
 
@@ -120,30 +129,19 @@ function calculateTotal() {
     document.getElementById('payment-total').textContent = total.toFixed(2);
 }
 
-document.getElementById('book-ticket-btn').addEventListener('click', () => {
-    const title = document.getElementById('detail-title').textContent;
-    const price = parseFloat(document.getElementById('detail-price').textContent);
-    
-    const urlParams = new URLSearchParams(globalThis.location.search);
-    const eventId = urlParams.get('id');
-
-    openPaymentModal(eventId, title, price);
-});
-
 //Handle the fake payment submission
 document.getElementById('payment-form').addEventListener('submit', async (e) => {
     e.preventDefault();
-    
+
     const qty = parseInt(document.getElementById('ticket-quantity').value);
     const totalAmount = qty * currentEventPrice;
     const errorDiv = document.getElementById('payment-error');
-    const successDiv = document.getElementById('payment-success');
-    
+
     //fake loading spinner
     const btnText = document.getElementById('pay-btn-text');
     const spinner = document.getElementById('pay-spinner');
     const payBtn = document.getElementById('pay-btn');
-    
+
     btnText.textContent = "Processing...";
     spinner.classList.remove('hidden');
     payBtn.disabled = true;
@@ -153,7 +151,7 @@ document.getElementById('payment-form').addEventListener('submit', async (e) => 
     setTimeout(async () => {
         try {
             const token = localStorage.getItem('jwtToken');
-            
+
             const bookingRequest = {
                 eventId: currentEventId,
                 numberOfTickets: qty,
@@ -169,9 +167,9 @@ document.getElementById('payment-form').addEventListener('submit', async (e) => 
                 body: JSON.stringify(bookingRequest)
             });
 
-           const responseText = await response.text(); 
+            const responseText = await response.text();
             let responseData = {};
-            
+
             if (responseText) {
                 try {
                     responseData = JSON.parse(responseText);
@@ -179,20 +177,14 @@ document.getElementById('payment-form').addEventListener('submit', async (e) => 
                     console.warn("Backend didn't send JSON. Raw response:", responseText);
                 }
             }
-
             // Handle Errors
             if (!response.ok) {
                 throw new Error(responseData.error || responseText || "Payment failed or seats unavailable.");
             }
 
-            // Success!
-            document.getElementById('payment-form').style.display = 'none';
-            successDiv.textContent = "Booking Confirmed! Redirecting...";
-            successDiv.classList.remove('hidden');
+            closePaymentModal();
 
-            setTimeout(() => {
-                globalThis.location.href = 'index.html'; 
-            }, 2000);
+            showBookingSuccess(currentEventName);
 
         } catch (error) {
             errorDiv.textContent = error.message;
@@ -213,6 +205,27 @@ if (paymentModal) {
     paymentModal.addEventListener('click', (e) => {
         if (e.target === paymentModal) closePaymentModal();
     });
+}
+
+function showBookingSuccess(eventName) {
+    document.getElementById('success-event-name').textContent = eventName;
+
+    const successModal = document.getElementById('booking-success-modal');
+    successModal.classList.remove('hidden');
+    successModal.style.display = 'flex';
+
+    confetti({
+        particleCount: 150,
+        spread: 80,
+        origin: { y: 0.5 },
+        colors: ['#20c997', '#ffffff', '#14aa84']
+    });
+}
+
+function closeSuccessModal() {
+    const successModal = document.getElementById('booking-success-modal');
+    successModal.classList.add('hidden');
+    successModal.style.display = 'none';
 }
 
 function logout() {
