@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List; 
 
 @Service
 public class BookingService {
@@ -44,5 +45,30 @@ public class BookingService {
         booking.setBookingDate(LocalDateTime.now());
 
         bookingRepository.save(booking);
+    }
+
+    public List<Booking> getBookingsForEvent(Long eventId) {
+        return bookingRepository.findByEventId(eventId);
+    }
+
+    public List<Booking> getMyBookings(String email) {
+        return bookingRepository.findByUserEmail(email);
+    }
+
+    @Transactional
+    public void cancelBooking(Long bookingId, String userEmail) {
+        Booking booking = bookingRepository.findById(bookingId)
+                .orElseThrow(() -> new RuntimeException("Booking not found"));
+        
+        if (!booking.getUserEmail().equals(userEmail)) {
+            throw new RuntimeException("You are not authorized to cancel this booking");
+        }
+
+        eventRepository.findById(booking.getEventId()).ifPresent(event -> {
+            event.setAvailableSeats(event.getAvailableSeats() + booking.getNumberOfTickets());
+            eventRepository.save(event);
+        });
+
+        bookingRepository.delete(booking);
     }
 }
