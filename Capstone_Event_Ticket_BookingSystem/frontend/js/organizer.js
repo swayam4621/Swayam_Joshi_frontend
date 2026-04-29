@@ -162,8 +162,9 @@ document.getElementById('create-event-form').addEventListener('submit', async fu
         location: document.getElementById('event-location').value,
         price: Number.parseFloat(document.getElementById('event-price').value),
         totalTickets: Number.parseInt(document.getElementById('event-tickets').value),
-        artistName: document.getElementById('event-artist').value, // NEW
+        artistName: document.getElementById('event-artist').value, 
         imageUrl: document.getElementById('event-image').value,
+        category: document.getElementById('event-category').value 
     };
 
     try {
@@ -204,6 +205,7 @@ function openUpdateModal(eventJsonEncoded) {
     document.getElementById('upd-image').value = event.imageUrl || '';
     document.getElementById('upd-artist').value = event.artistName || '';
     document.getElementById('update-modal').classList.remove('hidden');
+    document.getElementById('update-event-category').value = event.category || 'Other';
 }
 
 function closeUpdateModal() {
@@ -216,6 +218,7 @@ document.getElementById('update-event-form').addEventListener('submit', async fu
     const eventId = document.getElementById('update-event-id').value;
     const updateData = {
         title: document.getElementById('upd-title').value,
+        category: document.getElementById('update-event-category').value,
         description: document.getElementById('upd-desc').value,
         eventDate: document.getElementById('upd-date').value,
         location: document.getElementById('upd-location').value,

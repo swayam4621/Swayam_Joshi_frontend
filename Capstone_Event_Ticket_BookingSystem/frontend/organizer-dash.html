@@ -48,6 +48,19 @@
             <h2 class="section-title">Create New Event</h2>
             <form id="create-event-form">
                 <div class="input-group"><label for="event-title">Event Title</label><input type="text" id="event-title" required></div>
+                <div class="input-group">
+                        <label for="event-category">Category</label>
+                        <select id="event-category" required>
+                            <option value="Music">Music</option>
+                            <option value="Comedy">Comedy</option>
+                            <option value="Sports">Sports</option>
+                            <option value="Nightlife">Nightlife</option>
+                            <option value="Performances">Performances</option>
+                            <option value="Food & Drinks">Food & Drinks</option>
+                            <option value="Fitness">Fitness</option>
+                            <option value="Other">Other</option>
+                        </select>
+                </div>
                 <div class="input-group"><label for="event-desc">Description</label><input type="text" id="event-desc" required></div>
                 <div class="form-row">
                     <div class="input-group flex-1"><label for="event-date">Date & Time</label><input type="datetime-local" id="event-date" required></div>
@@ -81,6 +94,19 @@
             <form id="update-event-form" class="modal-form">
                 <input type="hidden" id="update-event-id">
                 <div class="input-group"><label for="upd-title">Title</label><input type="text" id="upd-title" required></div>
+                <div class="input-group">
+                        <label for="update-event-category">Category</label>
+                        <select id="update-event-category" required>
+                            <option value="Music">Music</option>
+                            <option value="Comedy">Comedy</option>
+                            <option value="Sports">Sports</option>
+                            <option value="Nightlife">Nightlife</option>
+                            <option value="Performances">Performances</option>
+                            <option value="Food & Drinks">Food & Drinks</option>
+                            <option value="Fitness">Fitness</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
                 <div class="input-group"><label for="upd-desc">Description</label><input type="text" id="upd-desc" required></div>
                 <div class="form-row-sm">
                     <div class="input-group flex-1"><label for="upd-date">Date & Time</label><input type="datetime-local" id="upd-date" required></div>

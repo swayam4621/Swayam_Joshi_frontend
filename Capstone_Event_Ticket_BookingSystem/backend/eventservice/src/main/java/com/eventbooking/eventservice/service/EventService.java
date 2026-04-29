@@ -30,7 +30,7 @@ public class EventService {
         event.setAvailableSeats(request.getTotalTickets()); 
         event.setImageUrl(request.getImageUrl());
         event.setArtistName(request.getArtistName());
-        
+        event.setCategory(request.getCategory());
         event.setOrganizerEmail(organizerEmail); 
 
         return eventRepository.save(event);
@@ -47,6 +47,7 @@ public class EventService {
 
         event.setName(request.getTitle());
         event.setDescription(request.getDescription());
+        event.setCategory(request.getCategory());
         event.setEventDateTime(request.getEventDate());
         event.setVenue(request.getLocation());
         event.setTicketPrice(request.getPrice());
@@ -109,5 +110,53 @@ public class EventService {
 
         event.setStatus(Event.EventStatus.CANCELLED_BY_ORGANIZER);
         return eventRepository.save(event);
+    }
+
+    public List<Event> searchAndFilterActiveEvents(String keyword, String category, String timeframe) {
+        List<Event> activeEvents = eventRepository.findByStatus(Event.EventStatus.ACTIVE);
+
+        LocalDateTime now = LocalDateTime.now();
+
+        return activeEvents.stream()
+            .filter(event -> {
+                if (keyword != null && !keyword.trim().isEmpty()) {
+                    String searchKey = keyword.toLowerCase().trim();
+                    String name = event.getName() != null ? event.getName().toLowerCase() : "";
+                    String venue = event.getVenue() != null ? event.getVenue().toLowerCase() : "";
+                    
+                    if (!name.contains(searchKey) && !venue.contains(searchKey)) {
+                        return false;
+                    }
+                }
+
+                if (category != null && !category.trim().isEmpty() && !category.equalsIgnoreCase("All")) {
+                    if (event.getCategory() == null || !event.getCategory().equalsIgnoreCase(category)) {
+                        return false;
+                    }
+                }
+                if (timeframe != null && !timeframe.trim().isEmpty() && !timeframe.equalsIgnoreCase("All")) {
+                    LocalDateTime eventDate = event.getEventDateTime();
+                    
+                    if (eventDate == null) {
+                        return false; 
+                    }
+                    
+                    if (timeframe.equalsIgnoreCase("Today")) {
+                        if (!eventDate.toLocalDate().isEqual(now.toLocalDate())) return false;
+                    } 
+                    else if (timeframe.equalsIgnoreCase("Tomorrow")) {
+                        if (!eventDate.toLocalDate().isEqual(now.toLocalDate().plusDays(1))) return false;
+                    } 
+                    else if (timeframe.equalsIgnoreCase("This Weekend")) {
+                        java.time.DayOfWeek day = eventDate.getDayOfWeek();
+                        boolean isWeekend = (day == java.time.DayOfWeek.SATURDAY || day == java.time.DayOfWeek.SUNDAY);
+                        boolean isUpcoming = eventDate.isAfter(now.minusDays(1)) && eventDate.isBefore(now.plusDays(7));
+                        if (!isWeekend || !isUpcoming) return false;
+                    }
+                }
+                
+                return true;
+            })
+            .collect(java.util.stream.Collectors.toList());
     }
 }

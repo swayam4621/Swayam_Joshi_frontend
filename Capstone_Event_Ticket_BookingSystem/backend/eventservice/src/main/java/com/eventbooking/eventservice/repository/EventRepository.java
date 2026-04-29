@@ -9,6 +9,9 @@ import java.util.List;
 
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
+
+        List<Event> findByStatus(Event.EventStatus status);
+
     //this gets all events 
     List<Event> findByOrganizerEmail(String organizerEmail);
     //Upcoming

@@ -3,6 +3,9 @@ const AUTH_API_URL = 'http://localhost:8081/api/auth';
 
 let currentSlide = 0;
 let slideInterval;
+let currentSearchQuery = '';
+let currentTimeframe = 'All';
+let currentCategory = 'All';
 
 document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('jwtToken');
@@ -106,7 +109,70 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    fetchPublicEvents();
+    fetchPublicEvents(false);
+
+    //search bar listeners
+    const searchInput = document.getElementById('search-input');
+    const searchBtn = document.getElementById('search-trigger-btn');
+    if (searchBtn && searchInput) {
+        searchBtn.addEventListener('click', () => {
+            currentSearchQuery = searchInput.value;
+            fetchPublicEvents(true); 
+        });
+        searchInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                currentSearchQuery = searchInput.value;
+                fetchPublicEvents(true);
+            }
+        });
+        searchInput.addEventListener('input', () => {
+            currentSearchQuery = searchInput.value;
+            fetchPublicEvents(true);
+        });
+        searchInput.addEventListener('input', () => {
+            if (searchInput.value.trim() === '') {
+                currentSearchQuery = '';
+                fetchPublicEvents(true);
+            }
+        });
+    }
+
+    const filterBtns = document.querySelectorAll('.filter-btn');
+    filterBtns.forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const filterType = e.target.getAttribute('data-type');
+            const filterValue = e.target.getAttribute('data-value');
+
+            if (!filterType) return; 
+
+            if (filterType === 'timeframe') {
+                document.querySelectorAll('.filter-btn[data-type="timeframe"]').forEach(b => b.classList.remove('active-filter'));
+                currentTimeframe = filterValue;
+            } else if (filterType === 'category') {
+                if (currentCategory === filterValue) {
+                    currentCategory = 'All'; 
+                    e.target.classList.remove('active-filter');
+                } else {
+                    document.querySelectorAll('.filter-btn[data-type="category"]').forEach(b => b.classList.remove('active-filter'));
+                    currentCategory = filterValue;
+                    e.target.classList.add('active-filter');
+                }
+            } else {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active-filter'));
+                e.target.classList.add('active-filter');
+                currentTimeframe = 'All';
+                currentCategory = 'All';
+                currentSearchQuery = '';
+                if(document.getElementById('search-input')) document.getElementById('search-input').value = '';
+            }
+
+            if(filterType !== 'category' || currentCategory !== 'All') {
+                 e.target.classList.add('active-filter');
+            }
+
+            fetchPublicEvents(true);
+        });
+    });
 
     //close boxes when clicking outside
     const loginModal = document.getElementById('login-modal');
@@ -164,7 +230,7 @@ function handleBookClick(eventId) {
 }
 
 // --- API fetch n rendering ---
-async function fetchPublicEvents() {
+async function fetchPublicEvents(isFilterUpdate = false) {
     const grid = document.getElementById('public-events-grid');
     const artistContainer = document.getElementById('dynamic-artists-container');
     const carousel = document.getElementById('hero-carousel');
@@ -175,25 +241,35 @@ async function fetchPublicEvents() {
     const artistTemplate = document.getElementById('artist-item-template');
     
     try {
-        const response = await fetch(`${EVENT_API_URL}?filter=upcoming`);
+        const url = new URL(`${EVENT_API_URL}/search?`);
+        url.searchParams.append('keyword', currentSearchQuery || '');
+        url.searchParams.append('category', currentCategory === 'All' ? '' : currentCategory);
+        url.searchParams.append('timeframe', currentTimeframe === 'All' ? '' : currentTimeframe);
+
+        const response = await fetch(url.toString());
+
         if (!response.ok) throw new Error("Failed to load events");
         
         const events = await response.json();
         
         grid.replaceChildren();
-        artistContainer.replaceChildren();
-        carousel.replaceChildren();
-        dotsContainer.replaceChildren();
+        if (!isFilterUpdate) {
+            artistContainer.replaceChildren();
+            carousel.replaceChildren();
+            dotsContainer.replaceChildren();
+        }
 
         if (events.length === 0) {
             const emptyMsg = document.createElement('p');
             emptyMsg.className = 'status-message';
             emptyMsg.style.gridColumn = '1/-1';
-            emptyMsg.textContent = 'No upcoming events found.';
+            emptyMsg.textContent = 'No events found matching your criteria.';
             grid.appendChild(emptyMsg);
             return;
         }
 
+        if (!isFilterUpdate) {
+        
         //render hero carousel
         const featuredEvents = events.slice(0, 4);
         featuredEvents.forEach((event, index) => {
@@ -223,6 +299,7 @@ async function fetchPublicEvents() {
                 goToSlide(nextSlide);
             }, 4000);
         }
+        }
 
         //Render events grid
         events.forEach((event) => {
@@ -243,7 +320,8 @@ async function fetchPublicEvents() {
         });
 
         //Render artists
-        try {
+        if (!isFilterUpdate) {
+            try {
             const artistResponse = await fetch(`${EVENT_API_URL}?filter=artists`);
             if (!artistResponse.ok) throw new Error("Failed to fetch artists");
             const artistEvents = await artistResponse.json();
@@ -281,6 +359,7 @@ async function fetchPublicEvents() {
             }
         } catch (artistError) {
             console.error("Artist fetch error:", artistError);
+        }
         }
 
     } catch (error) {

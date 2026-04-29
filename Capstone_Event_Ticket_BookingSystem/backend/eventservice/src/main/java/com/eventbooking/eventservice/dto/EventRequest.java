@@ -11,6 +11,7 @@ public class EventRequest {
     private Integer totalTickets;
     private String imageUrl;
     private String artistName;
+    private String category;
 
     public String getTitle() {
         return title;
@@ -74,5 +75,13 @@ public class EventRequest {
 
     public void setArtistName(String artistName) {
         this.artistName = artistName;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 }

@@ -61,4 +61,18 @@ public class EventController {
         List<Event> events = eventService.getAllEvents(filter);
         return ResponseEntity.ok(events);
     }
+
+    @GetMapping("/search")
+    public ResponseEntity<?> searchEvents(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false) String category,
+            @RequestParam(required = false) String timeframe) {
+        try {
+            List<Event> filteredEvents = eventService.searchAndFilterActiveEvents(keyword, category, timeframe);
+            return ResponseEntity.ok(filteredEvents);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"error\": \"Search failed\"}");
+        }
+    }
 }

@@ -277,3 +277,10 @@
     font-size: 0.8rem;
     font-weight: bold;
 }
+/* filter button */
+.filter-btn.active-filter {
+    background: var(--primary-teal) !important;
+    color: white !important;
+    border-color: var(--primary-teal) !important;
+}
+
