@@ -44,7 +44,7 @@ async function fetchMyBookings() {
 
         const bookings = await response.json();
         const grid = document.getElementById('bookings-grid');
-        grid.innerHTML = ''; // Clear loading states if any
+        grid.innerHTML = '';
 
         if (bookings.length === 0) {
             document.getElementById('no-bookings-msg').classList.remove('hidden');
@@ -66,18 +66,26 @@ async function fetchMyBookings() {
                     const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(secureQrData)}`;
 
                     const cardClone = template.content.cloneNode(true);
+                    const cardElement = cardClone.querySelector('.event-card');
+
+                    cardElement.querySelector('.booking-event-name').textContent = eventName;
+                    cardElement.querySelector('.booking-date-val').textContent = eventDate;
+                    cardElement.querySelector('.booking-qty-val').textContent = booking.numberOfTickets;
+                    cardElement.querySelector('.booking-price-val').textContent = booking.totalAmount.toFixed(2);
                     
-                    cardClone.querySelector('.booking-event-name').textContent = eventName;
-                    cardClone.querySelector('.booking-date-val').textContent = eventDate;
-                    cardClone.querySelector('.booking-qty-val').textContent = booking.numberOfTickets;
-                    cardClone.querySelector('.booking-price-val').textContent = booking.totalAmount.toFixed(2);
-                    
-                    const viewBtn = cardClone.querySelector('.btn-view-qr');
+                    const viewBtn = cardElement.querySelector('.btn-view-qr');
                     viewBtn.addEventListener('click', () => {
                         openQrModal(eventName, eventDate, booking.id, booking.numberOfTickets, qrUrl);
                     });
 
-                    grid.appendChild(cardClone);
+                    const cancelBtn = cardElement.querySelector('.btn-cancel-booking');
+                    cancelBtn.addEventListener('click', async () => {
+                        if (confirm(`Are you sure you want to cancel your tickets for ${eventName}? This cannot be undone.`)) {
+                            cancelBooking(booking.id, cardElement);
+                        }
+                    });
+
+                    grid.appendChild(cardElement);
                 } catch (err) {
                     console.error("Failed to load details for event ID:", booking.eventId, err);
                     const cardClone = template.content.cloneNode(true);
@@ -99,6 +107,7 @@ async function fetchMyBookings() {
     }
 }
 
+// qr modal functions
 function openQrModal(eventName, eventDate, ticketId, qty, qrUrl) {
     document.getElementById('qr-event-name').textContent = `Entry Pass - ${eventName}`;
     document.getElementById('qr-event-date').textContent = eventDate;
@@ -115,4 +124,44 @@ function closeQrModal() {
         const qrImg = document.getElementById('qr-code-img');
         if(qrImg) qrImg.src = '';
     }, 200); 
+}
+
+//Cancel booking function
+async function cancelBooking(bookingId, cardElement) {
+    try {
+        const token = localStorage.getItem('jwtToken');
+        
+        const cancelBtn = cardElement.querySelector('.btn-cancel-booking');
+        cancelBtn.disabled = true;
+        cancelBtn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i>';
+
+        const response = await fetch(`${BOOKING_API_URL}/cancel/${bookingId}`, {
+            method: 'DELETE',
+            headers: { 'Authorization': `Bearer ${token}` }
+        });
+
+        if (!response.ok) {
+            const errData = await response.json();
+            throw new Error(errData.error || "Failed to cancel booking");
+        }
+
+        cardElement.style.transition = "opacity 0.4s ease, transform 0.4s ease";
+        cardElement.style.opacity = "0";
+        cardElement.style.transform = "scale(0.95)";
+        
+        setTimeout(() => {
+            cardElement.remove();
+            
+            const grid = document.getElementById('bookings-grid');
+            if (grid.children.length === 0) {
+                document.getElementById('no-bookings-msg').classList.remove('hidden');
+            }
+        }, 400);
+
+    } catch (error) {
+        alert(error.message);
+        const cancelBtn = cardElement.querySelector('.btn-cancel-booking');
+        cancelBtn.disabled = false;
+        cancelBtn.innerHTML = '<i class="fa-solid fa-xmark"></i> Cancel';
+    }
 }
