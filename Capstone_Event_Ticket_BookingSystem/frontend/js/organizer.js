@@ -30,6 +30,15 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
+
+    const now = new Date();
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); 
+    const minDateTime = now.toISOString().slice(0, 16); 
+    const createDateInput = document.getElementById('event-date');
+    const updateDateInput = document.getElementById('update-event-date');
+    
+    if (createDateInput) createDateInput.min = minDateTime;
+    if (updateDateInput) updateDateInput.min = minDateTime;
 });
 
 function logout() {

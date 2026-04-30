@@ -7,11 +7,14 @@ import com.eventbooking.eventservice.repository.BookingRepository;
 import com.eventbooking.eventservice.repository.EventRepository;
 import com.eventbooking.eventservice.exception.EventNotFoundException;
 import com.eventbooking.eventservice.exception.InsufficientSeatsException;
+import com.eventbooking.eventservice.exception.UnauthorizedAccessException;
+import com.eventbooking.eventservice.exception.BookingCancellationDeadlineException;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.util.List; 
+import java.util.List;
 
 @Service
 public class BookingService {
@@ -27,7 +30,8 @@ public class BookingService {
     @Transactional
     public void processBooking(BookingRequest request, String userEmail) {
         Event event = eventRepository.findById(request.getEventId())
-                .orElseThrow(() -> new EventNotFoundException("Event with ID " + request.getEventId() + " could not be found."));
+                .orElseThrow(() -> new EventNotFoundException(
+                        "Event with ID " + request.getEventId() + " could not be found."));
 
         if (event.getAvailableSeats() < request.getNumberOfTickets()) {
             throw new InsufficientSeatsException("Not enough seats available");
@@ -41,7 +45,7 @@ public class BookingService {
         booking.setUserEmail(userEmail);
         booking.setNumberOfTickets(request.getNumberOfTickets());
         booking.setTotalAmount(request.getTotalAmount());
-        booking.setStatus("CONFIRMED");
+        booking.setStatus(Booking.Status.CONFIRMED);
         booking.setBookingDate(LocalDateTime.now());
 
         bookingRepository.save(booking);
@@ -59,16 +63,24 @@ public class BookingService {
     public void cancelBooking(Long bookingId, String userEmail) {
         Booking booking = bookingRepository.findById(bookingId)
                 .orElseThrow(() -> new RuntimeException("Booking not found"));
-        
+
         if (!booking.getUserEmail().equals(userEmail)) {
-            throw new RuntimeException("You are not authorized to cancel this booking");
+            throw new UnauthorizedAccessException("You are not authorized to cancel this booking");
         }
-
-        eventRepository.findById(booking.getEventId()).ifPresent(event -> {
-            event.setAvailableSeats(event.getAvailableSeats() + booking.getNumberOfTickets());
-            eventRepository.save(event);
-        });
-
-        bookingRepository.delete(booking);
+        if (booking.getStatus() == Booking.Status.CANCELLED) {
+            throw new RuntimeException("Booking is already cancelled.");
+        }
+        Event event = eventRepository.findById(booking.getEventId())
+            .orElseThrow(() -> new RuntimeException("Event not found"));
+        
+        LocalDateTime cancellationDeadline = event.getEventDateTime().minusHours(3);
+        if (LocalDateTime.now().isAfter(cancellationDeadline)) {
+            throw new BookingCancellationDeadlineException("Tickets cannot be cancelled within 3 hours of the event start time.");
+        }
+        
+        event.setAvailableSeats(event.getAvailableSeats() + booking.getNumberOfTickets());
+        eventRepository.save(event);
+        booking.setStatus(Booking.Status.CANCELLED);
+        bookingRepository.save(booking);
     }
 }

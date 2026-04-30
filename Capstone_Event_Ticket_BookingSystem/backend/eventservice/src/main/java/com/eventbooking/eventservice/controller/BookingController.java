@@ -24,7 +24,6 @@ public class BookingController {
     @PostMapping("/create")
     public ResponseEntity<?> createBooking(@RequestBody BookingRequest request, java.security.Principal principal) {
         try {
-            // Updated to use the correct processBooking method name
             bookingService.processBooking(request, principal.getName());
             return ResponseEntity.ok().body("{\"message\": \"Booking successful!\"}");
         } catch (RuntimeException e) {

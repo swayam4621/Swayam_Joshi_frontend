@@ -23,6 +23,20 @@
         <h2 class="section-heading my-tickets-heading">My Tickets</h2>
         <p class="hero-subtext mb-30">View your purchased tickets and entry QR codes.</p>
         
+        <div class="modal-header-flex mb-20" style="align-items: center; border-bottom: 1px solid #333; padding-bottom: 15px;">
+            <div class="scroll-container mb-0" style="padding-bottom: 0;">
+                <button class="filter-btn active-filter tab-btn" data-status="CONFIRMED">Upcoming & Confirmed</button>
+                <button class="filter-btn tab-btn" data-status="CANCELLED">Cancelled Tickets</button>
+            </div>
+            
+            <div>
+                <select id="sort-date-select" class="input-group" style="margin-bottom: 0; padding: 8px 15px; border-radius: 20px; background: #222; color: white; border: 1px solid #444;">
+                    <option value="asc">Date: Upcoming First</option>
+                    <option value="desc">Date: Furthest First</option>
+                </select>
+            </div>
+        </div>
+
         <div id="bookings-grid" class="events-grid">
             </div>
         
@@ -52,7 +66,7 @@
         <div class="event-card">
             <div class="card-header">
                 <h3 class="card-title booking-event-name">Event name</h3>
-                <span class="booking-confirmed-badge">CONFIRMED</span>
+                <span class="booking-status-badge"></span>
             </div>
             <p class="card-text-sm date-text mb-10"><i class="fa-solid fa-calendar text-teal"></i> <span class="booking-date-val"></span></p>
             <p class="card-text price-text mb-10"><i class="fa-solid fa-ticket text-teal"></i> <span class="booking-qty-val"></span> Ticket(s)</p>

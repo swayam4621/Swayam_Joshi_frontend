@@ -283,4 +283,22 @@
     color: white !important;
     border-color: var(--primary-teal) !important;
 }
+.badge-cancelled {
+    background-color: #ff4444 !important;
+    color: white !important;
+}
 
+.btn-locked {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.d-none {
+    display: none !important;
+}
+
+.fade-out-scale {
+    opacity: 0;
+    transform: scale(0.95);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+}
