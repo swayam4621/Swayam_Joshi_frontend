@@ -74,6 +74,26 @@ document.addEventListener('DOMContentLoaded', () => {
             const errorDiv = document.getElementById('signup-error');
             const successDiv = document.getElementById('signup-success');
 
+            //frontend validation for register form
+            const phoneRegex = /^\d{10}$/;
+            if (!phoneRegex.test(phone)) {
+                errorDiv.textContent = "Phone number must be exactly 10 digits.";
+                errorDiv.classList.remove('hidden');
+                return; 
+            }
+
+            if (!email.toLowerCase().endsWith('@gmail.com')) {
+                errorDiv.textContent = "Please use a valid @gmail.com email address.";
+                errorDiv.classList.remove('hidden');
+                return; 
+            }
+            const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,12}$/;
+            if (!passwordRegex.test(password)) {
+                errorDiv.textContent = "Password must be 8-12 characters and include an uppercase letter, lowercase letter, and special character.";
+                errorDiv.classList.remove('hidden');
+                return; 
+            }
+
            try {
                 const response = await fetch(`${AUTH_API_URL}/register`, {
                     method: 'POST',
