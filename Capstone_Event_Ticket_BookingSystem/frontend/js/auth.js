@@ -9,7 +9,7 @@ function closeAuthModal() {
     clearMessages();
 }
 
-document.getElementById('auth-modal').addEventListener('click', function(e) {
+document.getElementById('auth-modal').addEventListener('click', function (e) {
     if (e.target === this) closeAuthModal();
 });
 
@@ -22,7 +22,7 @@ function toggleForms() {
 function clearMessages() {
     const errorEls = document.querySelectorAll('.error-msg');
     const successEls = document.querySelectorAll('.success-msg');
-    
+
     errorEls.forEach(el => { el.innerText = ''; el.classList.add('hidden'); });
     successEls.forEach(el => { el.innerText = ''; el.classList.add('hidden'); });
 }
@@ -33,12 +33,12 @@ function showMessage(elementId, message) {
     el.classList.remove('hidden');
 }
 
-// --- Registration listeners ---
-document.getElementById('register-form').addEventListener('submit', async function(e) {
+// --- Registration form listeners ---
+document.getElementById('register-form').addEventListener('submit', async function (e) {
     e.preventDefault();
     clearMessages();
 
-    //Gather Data
+    //Collect data from registration form 
     const data = {
         name: document.getElementById('reg-name').value,
         email: document.getElementById('reg-email').value,
@@ -48,24 +48,23 @@ document.getElementById('register-form').addEventListener('submit', async functi
     };
 
     try {
-        //Make API Call
+        //Make api call to backend 8081 auth service
         const response = await fetch(`${API_BASE_URL}/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
 
-        //Handle Success
         if (response.ok) {
             const result = await response.json();
             showMessage('reg-success', result.message || "Registration successful! Redirecting to login...");
             document.getElementById('register-form').reset();
-            
-            setTimeout(toggleForms, 2000); 
-        } 
+
+            setTimeout(toggleForms, 2000);
+        }
         else {
             const errorData = await response.json();
-            
+
             const errorMessage = errorData.error || Object.values(errorData)[0] || "Registration failed. Check inputs.";
             showMessage('reg-error', errorMessage);
         }
@@ -75,29 +74,28 @@ document.getElementById('register-form').addEventListener('submit', async functi
     }
 });
 
-// --- Login Listeners ---
-document.getElementById('login-form').addEventListener('submit', async function(e) {
+// --- Login form listeners ---
+document.getElementById('login-form').addEventListener('submit', async function (e) {
     e.preventDefault();
     clearMessages();
 
-    //Gather Data
+    //Gather data from login form
     const data = {
         email: document.getElementById('login-email').value,
         password: document.getElementById('login-password').value
     };
 
     try {
-        //Make API Call
+        //Make api call to backend 8081 auth service
         const response = await fetch(`${API_BASE_URL}/login`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(data)
         });
 
-        //Handle Success
         if (response.ok) {
             const result = await response.json();
-            
+
             localStorage.setItem('jwtToken', result.token);
             localStorage.setItem('userRole', result.role);
             localStorage.setItem('userEmail', result.email);
@@ -107,8 +105,7 @@ document.getElementById('login-form').addEventListener('submit', async function(
             } else if (result.role === 'ORGANIZER') {
                 globalThis.location.href = 'organizer-dash.html';
             }
-        } 
-        // Handle Error 
+        }
         else {
             const errorData = await response.json();
             showMessage('login-error', errorData.error || "Invalid email or password.");

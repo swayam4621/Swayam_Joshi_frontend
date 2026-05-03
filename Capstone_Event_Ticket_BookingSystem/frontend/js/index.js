@@ -1,5 +1,5 @@
 const EVENT_API_URL = 'http://localhost:8082/api/events';
-const AUTH_API_URL = 'http://localhost:8081/api/auth'; 
+const AUTH_API_URL = 'http://localhost:8081/api/auth';
 
 let currentSlide = 0;
 let slideInterval;
@@ -16,8 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     if (localStorage.getItem('showLoginToast') === 'true') {
         showToast("Login Successful! Welcome back.");
-        
-        localStorage.removeItem('showLoginToast'); 
+
+        localStorage.removeItem('showLoginToast');
     }
     updateNavbarState();
 
@@ -53,17 +53,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
 
                 const data = await response.json();
-                
-                localStorage.setItem('jwtToken', data.token); 
+
+                localStorage.setItem('jwtToken', data.token);
                 localStorage.setItem('userRole', data.role);
                 localStorage.setItem('userEmail', email);
 
-                localStorage.setItem('showLoginToast', 'true');       
+                localStorage.setItem('showLoginToast', 'true');
 
                 if (data.role === 'ORGANIZER') {
                     window.location.href = 'organizer-dash.html';
                 } else {
-                    window.location.reload(); 
+                    window.location.reload();
                 }
             } catch (error) {
                 errorDiv.textContent = error.message;
@@ -88,22 +88,22 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!phoneRegex.test(phone)) {
                 errorDiv.textContent = "Phone number must be exactly 10 digits.";
                 errorDiv.classList.remove('hidden');
-                return; 
+                return;
             }
 
             if (!email.toLowerCase().endsWith('@gmail.com')) {
                 errorDiv.textContent = "Please use a valid @gmail.com email address.";
                 errorDiv.classList.remove('hidden');
-                return; 
+                return;
             }
             const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#$%^&*(),.?":{}|<>]).{8,12}$/;
             if (!passwordRegex.test(password)) {
                 errorDiv.textContent = "Password must be 8-12 characters and include an uppercase letter, lowercase letter, and special character.";
                 errorDiv.classList.remove('hidden');
-                return; 
+                return;
             }
 
-           try {
+            try {
                 const response = await fetch(`${AUTH_API_URL}/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -113,14 +113,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (!response.ok) {
                     const errorData = await response.json();
                     let errorMessage = "Registration failed. Check inputs.";
-                        
+
                     if (errorData.message) errorMessage = errorData.message;
                     else if (errorData.error) errorMessage = errorData.error;
-                    else if (typeof errorData === 'object') errorMessage = Object.values(errorData)[0]; 
+                    else if (typeof errorData === 'object') errorMessage = Object.values(errorData)[0];
 
                     throw new Error(errorMessage);
                 }
-                
+
                 errorDiv.classList.add('hidden');
                 successDiv.textContent = "Account created! Please log in.";
                 successDiv.classList.remove('hidden');
@@ -146,7 +146,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (searchBtn && searchInput) {
         searchBtn.addEventListener('click', () => {
             currentSearchQuery = searchInput.value;
-            fetchPublicEvents(true); 
+            fetchPublicEvents(true);
         });
         searchInput.addEventListener('keypress', (e) => {
             if (e.key === 'Enter') {
@@ -173,14 +173,14 @@ document.addEventListener('DOMContentLoaded', () => {
             const filterType = e.target.getAttribute('data-type');
             const filterValue = e.target.getAttribute('data-value');
 
-            if (!filterType) return; 
+            if (!filterType) return;
 
             if (filterType === 'timeframe') {
                 document.querySelectorAll('.filter-btn[data-type="timeframe"]').forEach(b => b.classList.remove('active-filter'));
                 currentTimeframe = filterValue;
             } else if (filterType === 'category') {
                 if (currentCategory === filterValue) {
-                    currentCategory = 'All'; 
+                    currentCategory = 'All';
                     e.target.classList.remove('active-filter');
                 } else {
                     document.querySelectorAll('.filter-btn[data-type="category"]').forEach(b => b.classList.remove('active-filter'));
@@ -193,11 +193,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 currentTimeframe = 'All';
                 currentCategory = 'All';
                 currentSearchQuery = '';
-                if(document.getElementById('search-input')) document.getElementById('search-input').value = '';
+                if (document.getElementById('search-input')) document.getElementById('search-input').value = '';
             }
 
-            if(filterType !== 'category' || currentCategory !== 'All') {
-                 e.target.classList.add('active-filter');
+            if (filterType !== 'category' || currentCategory !== 'All') {
+                e.target.classList.add('active-filter');
             }
 
             fetchPublicEvents(true);
@@ -207,13 +207,13 @@ document.addEventListener('DOMContentLoaded', () => {
     //close boxes when clicking outside
     const loginModal = document.getElementById('login-modal');
     const signupModal = document.getElementById('signup-modal');
-    
+
     if (loginModal) {
         loginModal.addEventListener('click', (e) => {
             if (e.target === loginModal) closeAuthModals();
         });
     }
-    
+
     if (signupModal) {
         signupModal.addEventListener('click', (e) => {
             if (e.target === signupModal) closeAuthModals();
@@ -234,7 +234,7 @@ function updateNavbarState() {
     if (token && role === 'CUSTOMER') {
         loggedOutNav.classList.add('hidden');
         loggedInNav.classList.remove('hidden');
-        
+
         const namePart = email.split('@')[0];
         greeting.textContent = `Hello, ${namePart.charAt(0).toUpperCase() + namePart.slice(1)}`;
     } else {
@@ -245,7 +245,7 @@ function updateNavbarState() {
 
 function logout() {
     localStorage.clear();
-    window.location.reload(); 
+    window.location.reload();
 }
 
 function handleBookClick(eventId) {
@@ -259,18 +259,19 @@ function handleBookClick(eventId) {
     }
 }
 
-// --- API fetch n rendering ---
+// --- Fetching events and rendering them ---
 async function fetchPublicEvents(isFilterUpdate = false) {
     const grid = document.getElementById('public-events-grid');
     const artistContainer = document.getElementById('dynamic-artists-container');
     const carousel = document.getElementById('hero-carousel');
     const dotsContainer = document.getElementById('carousel-dots');
-    
+
     const eventTemplate = document.getElementById('public-event-card-template');
     const slideTemplate = document.getElementById('hero-slide-template');
     const artistTemplate = document.getElementById('artist-item-template');
-    
+
     try {
+        // Api call to backend 8082 eventservice
         const url = new URL(`${EVENT_API_URL}/search?`);
         url.searchParams.append('keyword', currentSearchQuery || '');
         url.searchParams.append('category', currentCategory === 'All' ? '' : currentCategory);
@@ -279,9 +280,9 @@ async function fetchPublicEvents(isFilterUpdate = false) {
         const response = await fetch(url.toString());
 
         if (!response.ok) throw new Error("Failed to load events");
-        
+
         const events = await response.json();
-        
+
         grid.replaceChildren();
         if (!isFilterUpdate) {
             artistContainer.replaceChildren();
@@ -299,39 +300,39 @@ async function fetchPublicEvents(isFilterUpdate = false) {
         }
 
         if (!isFilterUpdate) {
-        
-        //render hero carousel
-        const featuredEvents = events.slice(0, 4);
-        featuredEvents.forEach((event, index) => {
-            const defaultImg = 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=1200';
-            const bgImage = event.imageUrl || defaultImg;
 
-            const slideClone = slideTemplate.content.cloneNode(true);
-            const slideDiv = slideClone.querySelector('.hero-slide');
-            
-            slideDiv.style.backgroundImage = `url('${bgImage}')`;
-            slideClone.querySelector('.slide-title').textContent = event.name;
-            
-            const dateStr = new Date(event.eventDateTime).toLocaleDateString('en-US', { month: 'short', day: 'numeric'});
-            slideClone.querySelector('.slide-subtitle').textContent = `${dateStr} | ${event.venue}`;
-            
-            carousel.appendChild(slideClone);
+            //render hero carousel
+            const featuredEvents = events.slice(0, 4);
+            featuredEvents.forEach((event, index) => {
+                const defaultImg = 'https://images.unsplash.com/photo-1459749411175-04bf5292ceea?w=1200';
+                const bgImage = event.imageUrl || defaultImg;
 
-            const dot = document.createElement('div');
-            dot.className = index === 0 ? 'dot active' : 'dot';
-            dot.onclick = () => goToSlide(index);
-            dotsContainer.appendChild(dot);
-        });
+                const slideClone = slideTemplate.content.cloneNode(true);
+                const slideDiv = slideClone.querySelector('.hero-slide');
 
-        if (featuredEvents.length > 1) {
-            slideInterval = setInterval(() => {
-                let nextSlide = (currentSlide + 1) % featuredEvents.length;
-                goToSlide(nextSlide);
-            }, 4000);
+                slideDiv.style.backgroundImage = `url('${bgImage}')`;
+                slideClone.querySelector('.slide-title').textContent = event.name;
+
+                const dateStr = new Date(event.eventDateTime).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+                slideClone.querySelector('.slide-subtitle').textContent = `${dateStr} | ${event.venue}`;
+
+                carousel.appendChild(slideClone);
+
+                const dot = document.createElement('div');
+                dot.className = index === 0 ? 'dot active' : 'dot';
+                dot.onclick = () => goToSlide(index);
+                dotsContainer.appendChild(dot);
+            });
+
+            if (featuredEvents.length > 1) {
+                slideInterval = setInterval(() => {
+                    let nextSlide = (currentSlide + 1) % featuredEvents.length;
+                    goToSlide(nextSlide);
+                }, 4000);
+            }
         }
-        }
 
-        //Render events grid
+        //Render events grid 
         events.forEach((event) => {
             const cardClone = eventTemplate.content.cloneNode(true);
             const imgEl = cardClone.querySelector('.card-img');
@@ -352,44 +353,44 @@ async function fetchPublicEvents(isFilterUpdate = false) {
         //Render artists
         if (!isFilterUpdate) {
             try {
-            const artistResponse = await fetch(`${EVENT_API_URL}?filter=artists`);
-            if (!artistResponse.ok) throw new Error("Failed to fetch artists");
-            const artistEvents = await artistResponse.json();
+                const artistResponse = await fetch(`${EVENT_API_URL}?filter=artists`);
+                if (!artistResponse.ok) throw new Error("Failed to fetch artists");
+                const artistEvents = await artistResponse.json();
 
-            const uniqueArtists = new Map();
-            artistEvents.forEach(event => {
-                if (event.artistName && event.artistName.trim()) {
-                    if (!uniqueArtists.has(event.artistName)) {
-                        uniqueArtists.set(event.artistName, {
-                            name: event.artistName,
-                            image: event.imageUrl || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=150'
-                        });
+                const uniqueArtists = new Map();
+                artistEvents.forEach(event => {
+                    if (event.artistName && event.artistName.trim()) {
+                        if (!uniqueArtists.has(event.artistName)) {
+                            uniqueArtists.set(event.artistName, {
+                                name: event.artistName,
+                                image: event.imageUrl || 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=150'
+                            });
+                        }
                     }
-                }
-            });
-
-            const artistsHeading = document.getElementById('artists-heading');
-            if (uniqueArtists.size === 0) {
-                if (artistsHeading) artistsHeading.style.display = 'none';
-                artistContainer.style.display = 'none';
-            } else {
-                if (artistsHeading) artistsHeading.style.display = 'block';
-                artistContainer.style.display = 'flex';
-                
-                uniqueArtists.forEach(artist => {
-                    const artistClone = artistTemplate.content.cloneNode(true);
-                    const imgEl = artistClone.querySelector('.artist-img');
-                    
-                    imgEl.src = artist.image;
-                    imgEl.alt = artist.name;
-                    artistClone.querySelector('.artist-name').textContent = artist.name;
-                    
-                    artistContainer.appendChild(artistClone);
                 });
+
+                const artistsHeading = document.getElementById('artists-heading');
+                if (uniqueArtists.size === 0) {
+                    if (artistsHeading) artistsHeading.style.display = 'none';
+                    artistContainer.style.display = 'none';
+                } else {
+                    if (artistsHeading) artistsHeading.style.display = 'block';
+                    artistContainer.style.display = 'flex';
+
+                    uniqueArtists.forEach(artist => {
+                        const artistClone = artistTemplate.content.cloneNode(true);
+                        const imgEl = artistClone.querySelector('.artist-img');
+
+                        imgEl.src = artist.image;
+                        imgEl.alt = artist.name;
+                        artistClone.querySelector('.artist-name').textContent = artist.name;
+
+                        artistContainer.appendChild(artistClone);
+                    });
+                }
+            } catch (artistError) {
+                console.error("Artist fetch error:", artistError);
             }
-        } catch (artistError) {
-            console.error("Artist fetch error:", artistError);
-        }
         }
 
     } catch (error) {
@@ -402,18 +403,18 @@ async function fetchPublicEvents(isFilterUpdate = false) {
     }
 }
 
-// Carousel working logic
+// Carousel working and sliding method
 function goToSlide(index) {
     const carousel = document.getElementById('hero-carousel');
     const dots = document.querySelectorAll('.dot');
-    
+
     if (!carousel || dots.length === 0) return;
 
     currentSlide = index;
     carousel.style.transform = `translateX(-${currentSlide * 100}%)`;
-    
+
     dots.forEach(d => d.classList.remove('active'));
-    if(dots[currentSlide]) dots[currentSlide].classList.add('active');
+    if (dots[currentSlide]) dots[currentSlide].classList.add('active');
 }
 
 // Auth dialogs opening and closing functions
@@ -436,16 +437,17 @@ function closeAuthModals() {
     document.getElementById('login-modal').classList.add('hidden');
     document.getElementById('signup-modal').classList.add('hidden');
 }
+
 // Toast box function for success and error message
 function showToast(message, isError = false) {
     const toast = document.getElementById('toast-container');
     const msgElement = document.getElementById('toast-message');
-    
+
     if (!toast || !msgElement) return;
 
     const icon = isError ? '<i class="fa-solid fa-circle-exclamation"></i>' : '<i class="fa-solid fa-circle-check"></i>';
     msgElement.innerHTML = `${icon} ${message}`;
-    
+
     if (isError) {
         toast.classList.add('toast-error');
     } else {

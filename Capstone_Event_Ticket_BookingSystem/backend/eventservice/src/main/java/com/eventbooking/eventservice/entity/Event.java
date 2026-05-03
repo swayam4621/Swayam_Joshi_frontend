@@ -35,12 +35,11 @@ public class Event {
     private Double ticketPrice;
 
     private String category;
-    
-    private String comments; 
 
-    
+    private String comments;
+
     @Column(nullable = false)
-    private String organizerEmail; 
+    private String organizerEmail;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

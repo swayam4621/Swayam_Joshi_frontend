@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,10 +10,11 @@
     <link rel="stylesheet" href="css/modals.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body>
     <nav class="navbar sticky-nav">
         <div class="logo">EvenTix</div>
-        
+
         <div id="nav-logged-out" class="nav-links">
             <button type="button" class="text-btn text-white" id="nav-login-btn">Log In</button>
             <button type="button" class="nav-btn-outline" id="nav-signup-btn">Sign Up</button>
@@ -32,7 +34,7 @@
     </section>
 
     <main class="customer-main-container pt-20">
-        
+
         <div class="search-bar mt-20 mb-30">
             <input type="text" id="search-input" placeholder="Search events by name or venue...">
             <button class="search-btn" id="search-trigger-btn">
@@ -49,8 +51,9 @@
             <button class="filter-btn" data-type="timeframe" data-value="Today">Today</button>
             <button class="filter-btn" data-type="timeframe" data-value="Tomorrow">Tomorrow</button>
             <button class="filter-btn" data-type="timeframe" data-value="This Weekend">This Weekend</button>
-            
-            <span style="border-left: 1px solid #444; margin: 0 5px;"></span> <button class="filter-btn" data-type="category" data-value="Music">Music</button>
+
+            <span style="border-left: 1px solid #444; margin: 0 5px;"></span> <button class="filter-btn"
+                data-type="category" data-value="Music">Music</button>
             <button class="filter-btn" data-type="category" data-value="Comedy">Comedy</button>
             <button class="filter-btn" data-type="category" data-value="Sports">Sports</button>
             <button class="filter-btn" data-type="category" data-value="Nightlife">Nightlife</button>
@@ -64,7 +67,8 @@
 
     <template id="public-event-card-template">
         <div class="district-card">
-            <img class="card-img" src="https://images.unsplash.com/photo-1540039155732-6847350357a0?w=600" alt="Event Cover">
+            <img class="card-img" src="https://images.unsplash.com/photo-1540039155732-6847350357a0?w=600"
+                alt="Event Cover">
             <div class="card-body">
                 <p class="card-date date-text"></p>
                 <h3 class="card-title"></h3>
@@ -108,7 +112,8 @@
                     </div>
                     <div id="login-error" class="error-msg hidden"></div>
                     <button type="submit" class="btn primary-btn">Log In</button>
-                    <p class="switch-form">Don't have an account? <button type="button" class="text-btn" onclick="openSignupModal()">Sign up</button></p>
+                    <p class="switch-form">Don't have an account? <button type="button" class="text-btn"
+                            onclick="openSignupModal()">Sign up</button></p>
                 </form>
             </div>
         </div>
@@ -135,7 +140,8 @@
                     </div>
                     <div class="input-group">
                         <label>Password</label>
-                        <input type="password" id="signup-password" placeholder="Atleast 8 characters, one uppercase and a special character" required>
+                        <input type="password" id="signup-password"
+                            placeholder="Atleast 8 characters, one uppercase and a special character" required>
                     </div>
                     <div class="input-group">
                         <label>I am a...</label>
@@ -147,7 +153,8 @@
                     <div id="signup-error" class="error-msg hidden"></div>
                     <div id="signup-success" class="success-msg hidden"></div>
                     <button type="submit" class="btn primary-btn">Sign Up</button>
-                    <p class="switch-form">Already have an account? <button type="button" class="text-btn" onclick="openLoginModal()">Log in</button></p>
+                    <p class="switch-form">Already have an account? <button type="button" class="text-btn"
+                            onclick="openLoginModal()">Log in</button></p>
                 </form>
             </div>
         </div>
@@ -157,4 +164,5 @@
     </div>
     <script src="js/index.js?v=999"></script>
 </body>
+
 </html>

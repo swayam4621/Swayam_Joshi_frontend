@@ -51,7 +51,7 @@
 .modal-box::-webkit-scrollbar, .modal-box-lg::-webkit-scrollbar, .auth-wrapper::-webkit-scrollbar { width: 8px; }
 .modal-box::-webkit-scrollbar-thumb, .modal-box-lg::-webkit-scrollbar-thumb, .auth-wrapper::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
 
-/* MODAL FORMS and CONTENT */
+/* Forms and content */
 .auth-forms, .auth-wrapper > div, .modal-form {
     background-color: transparent !important; 
     box-shadow: none !important; 
@@ -70,7 +70,6 @@
 .details-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
 .details-label, .details-val { display: block; }
 
-/* RESPONSIVE & BROWSER FIXES */
 .form-row-sm { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 
 @media (max-width: 768px) {
@@ -85,7 +84,7 @@ input:-webkit-autofill, input:-webkit-autofill:hover, input:-webkit-autofill:foc
     transition: background-color 5000s ease-in-out 0s;
 }
 
-/*QR ENTRY PASS STYLES*/
+/*qr entry pass styling*/
 .qr-modal-content { align-items: center; text-align: center; }
 .entry-pass-title { font-size: 1.5rem; }
 .entry-pass-date { font-weight: 600; color: var(--primary-teal); }

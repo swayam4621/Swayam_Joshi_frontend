@@ -26,4 +26,28 @@ public class GlobalExceptionHandler {
         //returns 403 Forbidden
         return new ResponseEntity<>(response, HttpStatus.FORBIDDEN); 
     }
+
+    @ExceptionHandler(InsufficientSeatsException.class)
+    public ResponseEntity<Map<String, String>> handleInsufficientSeats(InsufficientSeatsException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", ex.getMessage());
+        //returns 400 Bad Request
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(BookingCancellationDeadlineException.class)
+    public ResponseEntity<Map<String, String>> handleBookingCancellationDeadline(BookingCancellationDeadlineException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", ex.getMessage());
+        //returns 400 Bad Request
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }   
+
+    @ExceptionHandler(PastEventCreationException.class)
+    public ResponseEntity<Map<String, String>> handlePastEventCreation(PastEventCreationException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("error", ex.getMessage());
+        //returns 400 Bad Request
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
+    }
 }

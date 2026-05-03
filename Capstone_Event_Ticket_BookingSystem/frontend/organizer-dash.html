@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,6 +10,7 @@
     <link rel="stylesheet" href="css/modals.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
+
 <body class="dashboard-body">
 
     <nav class="navbar">
@@ -20,65 +22,76 @@
     </nav>
 
     <div class="dashboard-panel">
-        
+
         <div class="tab-container mb-30">
-            <button class="tab-btn active-tab" id="tab-my-events" onclick="switchMainTab('my-events')">My Events</button>
-            <button class="tab-btn inactive-tab" id="tab-create" onclick="switchMainTab('create')">Create New Event</button>
+            <button class="tab-btn active-tab" id="tab-my-events" onclick="switchMainTab('my-events')">My
+                Events</button>
+            <button class="tab-btn inactive-tab" id="tab-create" onclick="switchMainTab('create')">Create New
+                Event</button>
         </div>
 
         <div id="my-events-section">
             <h2 class="section-title mb-20">Manage Your Events</h2>
-            
+
             <div class="tab-container" style="border-bottom: 1px solid var(--border-color); margin-bottom: 20px;">
-                <button class="tab-btn active-tab subtab-font" id="subtab-upcoming" onclick="switchSubTab('upcoming')">Upcoming</button>
-                <button class="tab-btn inactive-tab subtab-font" id="subtab-past" onclick="switchSubTab('past')">Past</button>
-                <button class="tab-btn inactive-tab subtab-font" id="subtab-cancelled" onclick="switchSubTab('cancelled')">Cancelled</button>
+                <button class="tab-btn active-tab subtab-font" id="subtab-upcoming"
+                    onclick="switchSubTab('upcoming')">Upcoming</button>
+                <button class="tab-btn inactive-tab subtab-font" id="subtab-past"
+                    onclick="switchSubTab('past')">Past</button>
+                <button class="tab-btn inactive-tab subtab-font" id="subtab-cancelled"
+                    onclick="switchSubTab('cancelled')">Cancelled</button>
             </div>
 
             <div id="upcoming-grid" class="events-grid"></div>
             <div id="past-grid" class="events-grid hidden"></div>
             <div id="cancelled-grid" class="events-grid hidden"></div>
-            
+
             <div id="no-events-msg" class="hidden">
-                <p class="empty-msg">No events found in this category.</p>            
+                <p class="empty-msg">No events found in this category.</p>
             </div>
         </div>
 
         <div id="create-section" class="hidden">
             <h2 class="section-title">Create New Event</h2>
             <form id="create-event-form">
-                <div class="input-group"><label for="event-title">Event Title</label><input type="text" id="event-title" required></div>
+                <div class="input-group"><label for="event-title">Event Title</label><input type="text" id="event-title"
+                        required></div>
                 <div class="input-group">
-                        <label for="event-category">Category</label>
-                        <select id="event-category" required>
-                            <option value="Music">Music</option>
-                            <option value="Comedy">Comedy</option>
-                            <option value="Sports">Sports</option>
-                            <option value="Nightlife">Nightlife</option>
-                            <option value="Performances">Performances</option>
-                            <option value="Food & Drinks">Food & Drinks</option>
-                            <option value="Fitness">Fitness</option>
-                            <option value="Other">Other</option>
-                        </select>
+                    <label for="event-category">Category</label>
+                    <select id="event-category" required>
+                        <option value="Music">Music</option>
+                        <option value="Comedy">Comedy</option>
+                        <option value="Sports">Sports</option>
+                        <option value="Nightlife">Nightlife</option>
+                        <option value="Performances">Performances</option>
+                        <option value="Food & Drinks">Food & Drinks</option>
+                        <option value="Fitness">Fitness</option>
+                        <option value="Other">Other</option>
+                    </select>
                 </div>
-                <div class="input-group"><label for="event-desc">Description</label><input type="text" id="event-desc" required></div>
+                <div class="input-group"><label for="event-desc">Description</label><input type="text" id="event-desc"
+                        required></div>
                 <div class="form-row">
-                    <div class="input-group flex-1"><label for="event-date">Date & Time</label><input type="datetime-local" id="event-date" required></div>
-                    <div class="input-group flex-1"><label for="event-location">Location</label><input type="text" id="event-location" required></div>
+                    <div class="input-group flex-1"><label for="event-date">Date & Time</label><input
+                            type="datetime-local" id="event-date" required></div>
+                    <div class="input-group flex-1"><label for="event-location">Location</label><input type="text"
+                            id="event-location" required></div>
                 </div>
                 <div class="form-row">
-                    <div class="input-group flex-1"><label for="event-price">Ticket Price (₹)</label><input type="number" id="event-price" required min="0" step="0.01"></div>
-                    <div class="input-group flex-1"><label for="event-tickets">Total Tickets</label><input type="number" id="event-tickets" required min="1"></div>
+                    <div class="input-group flex-1"><label for="event-price">Ticket Price (₹)</label><input
+                            type="number" id="event-price" required min="0" step="0.01"></div>
+                    <div class="input-group flex-1"><label for="event-tickets">Total Tickets</label><input type="number"
+                            id="event-tickets" required min="1"></div>
                 </div>
                 <div class="form-row">
-                <div class="input-group flex-1">
-                    <label>Artist / Performer Name (Optional)</label>
-                    <input type="text" id="event-artist">
-                </div>
-                <div class="input-group flex-1">
-                    <label>Poster Image URL (Optional)</label>
-                    <input type="url" id="event-image" placeholder="https://...">
-                </div>
+                    <div class="input-group flex-1">
+                        <label>Artist / Performer Name (Optional)</label>
+                        <input type="text" id="event-artist">
+                    </div>
+                    <div class="input-group flex-1">
+                        <label>Poster Image URL (Optional)</label>
+                        <input type="url" id="event-image" placeholder="https://...">
+                    </div>
                 </div>
                 <div id="event-error" class="error-msg hidden"></div>
                 <div id="event-success" class="success-msg hidden"></div>
@@ -93,31 +106,39 @@
             <h2>Update Event</h2>
             <form id="update-event-form" class="modal-form">
                 <input type="hidden" id="update-event-id">
-                <div class="input-group"><label for="upd-title">Title</label><input type="text" id="upd-title" required></div>
+                <div class="input-group"><label for="upd-title">Title</label><input type="text" id="upd-title" required>
+                </div>
                 <div class="input-group">
-                        <label for="update-event-category">Category</label>
-                        <select id="update-event-category" required>
-                            <option value="Music">Music</option>
-                            <option value="Comedy">Comedy</option>
-                            <option value="Sports">Sports</option>
-                            <option value="Nightlife">Nightlife</option>
-                            <option value="Performances">Performances</option>
-                            <option value="Food & Drinks">Food & Drinks</option>
-                            <option value="Fitness">Fitness</option>
-                            <option value="Other">Other</option>
-                        </select>
-                    </div>
-                <div class="input-group"><label for="upd-desc">Description</label><input type="text" id="upd-desc" required></div>
+                    <label for="update-event-category">Category</label>
+                    <select id="update-event-category" required>
+                        <option value="Music">Music</option>
+                        <option value="Comedy">Comedy</option>
+                        <option value="Sports">Sports</option>
+                        <option value="Nightlife">Nightlife</option>
+                        <option value="Performances">Performances</option>
+                        <option value="Food & Drinks">Food & Drinks</option>
+                        <option value="Fitness">Fitness</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div class="input-group"><label for="upd-desc">Description</label><input type="text" id="upd-desc"
+                        required></div>
                 <div class="form-row-sm">
-                    <div class="input-group flex-1"><label for="upd-date">Date & Time</label><input type="datetime-local" id="upd-date" required></div>
-                    <div class="input-group flex-1"><label for="upd-location">Location</label><input type="text" id="upd-location" required></div>
+                    <div class="input-group flex-1"><label for="upd-date">Date & Time</label><input
+                            type="datetime-local" id="upd-date" required></div>
+                    <div class="input-group flex-1"><label for="upd-location">Location</label><input type="text"
+                            id="upd-location" required></div>
                 </div>
                 <div class="form-row-sm">
-                    <div class="input-group flex-1"><label for="upd-price">Price (₹)</label><input type="number" id="upd-price" required min="0" step="0.01"></div>
-                    <div class="input-group flex-1"><label for="upd-tickets">Total Tickets</label><input type="number" id="upd-tickets" required min="1"></div>
+                    <div class="input-group flex-1"><label for="upd-price">Price (₹)</label><input type="number"
+                            id="upd-price" required min="0" step="0.01"></div>
+                    <div class="input-group flex-1"><label for="upd-tickets">Total Tickets</label><input type="number"
+                            id="upd-tickets" required min="1"></div>
                 </div>
-                <div class="input-group"><label for="upd-image">Image URL (optional)</label><input type="url" id="upd-image" placeholder="https://example.com/image.jpg"></div>
-                <div class="input-group"><label for="upd-artist">Artist Name (optional)</label><input type="text" id="upd-artist" placeholder="Artist or Performer"></div>
+                <div class="input-group"><label for="upd-image">Image URL (optional)</label><input type="url"
+                        id="upd-image" placeholder="https://example.com/image.jpg"></div>
+                <div class="input-group"><label for="upd-artist">Artist Name (optional)</label><input type="text"
+                        id="upd-artist" placeholder="Artist or Performer"></div>
                 <div id="upd-error" class="error-msg hidden"></div>
                 <button type="submit" class="btn primary-btn">Save Changes</button>
             </form>
@@ -127,34 +148,44 @@
     <div id="details-modal" class="modal-backdrop hidden">
         <div class="auth-wrapper relative modal-box-lg">
             <button class="close-modal-btn" onclick="closeDetailsModal()">✕</button>
-            
+
             <div class="modal-header-flex">
                 <h2 id="det-title" class="modal-title-m0">Event Details</h2>
                 <span id="det-status" class="badge badge-rounded"></span>
             </div>
-            
+
             <div class="details-box">
                 <p id="det-desc" class="details-desc"></p>
                 <div class="details-grid">
-                    <div><strong class="details-label">DATE & TIME</strong><span id="det-date" class="details-val"></span></div>
-                    <div><strong class="details-label">VENUE</strong><span id="det-venue" class="details-val"></span></div>
-                    <div><strong class="details-label">TICKET PRICE</strong><span class="details-val">₹<span id="det-price"></span></span></div>
-                    <div><strong class="details-label">CAPACITY</strong><span id="det-avail" class="details-val-highlight"></span> / <span id="det-total" class="details-val"></span> Available</div>
+                    <div><strong class="details-label">DATE & TIME</strong><span id="det-date"
+                            class="details-val"></span></div>
+                    <div><strong class="details-label">VENUE</strong><span id="det-venue" class="details-val"></span>
+                    </div>
+                    <div><strong class="details-label">TICKET PRICE</strong><span class="details-val">₹<span
+                                id="det-price"></span></span></div>
+                    <div><strong class="details-label">CAPACITY</strong><span id="det-avail"
+                            class="details-val-highlight"></span> / <span id="det-total" class="details-val"></span>
+                        Available</div>
                 </div>
 
                 <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid #333;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <div
+                        style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                         <h3 style="margin: 0; font-size: 1.2rem;">Attendee Analytics</h3>
-                        <button id="download-csv-btn" class="btn primary-btn" style="padding: 6px 12px; font-size: 0.85rem; border-radius: 4px;">
+                        <button id="download-csv-btn" class="btn primary-btn"
+                            style="padding: 6px 12px; font-size: 0.85rem; border-radius: 4px;">
                             <i class="fa-solid fa-download"></i> Download CSV
                         </button>
                     </div>
-                    
-                    <div class="details-grid" style="margin-bottom: 15px; background: #121212; padding: 10px; border-radius: 6px;">
-                        <div><strong class="details-label">TICKETS SOLD</strong><span id="det-tickets-sold" class="details-val text-teal">0</span></div>
-                        <div><strong class="details-label">TOTAL REVENUE</strong><span class="details-val text-teal">₹<span id="det-revenue">0.00</span></span></div>
+
+                    <div class="details-grid"
+                        style="margin-bottom: 15px; background: #121212; padding: 10px; border-radius: 6px;">
+                        <div><strong class="details-label">TICKETS SOLD</strong><span id="det-tickets-sold"
+                                class="details-val text-teal">0</span></div>
+                        <div><strong class="details-label">TOTAL REVENUE</strong><span
+                                class="details-val text-teal">₹<span id="det-revenue">0.00</span></span></div>
                     </div>
-                    
+
                     <div style="max-height: 200px; overflow-y: auto; border: 1px solid #333; border-radius: 6px;">
                         <table style="width: 100%; text-align: left; border-collapse: collapse; font-size: 0.9rem;">
                             <thead style="background: #1e1e1e; position: sticky; top: 0;">
@@ -166,9 +197,10 @@
                                 </tr>
                             </thead>
                             <tbody id="attendee-table-body">
-                                </tbody>
+                            </tbody>
                         </table>
-                        <p id="no-attendees-msg" class="hidden" style="text-align: center; padding: 15px; color: #888; margin: 0;">No tickets sold yet.</p>
+                        <p id="no-attendees-msg" class="hidden"
+                            style="text-align: center; padding: 15px; color: #888; margin: 0;">No tickets sold yet.</p>
                     </div>
                 </div>
             </div>
@@ -185,7 +217,7 @@
             <p class="card-text price-text"><i class="fa-solid fa-ticket text-teal"></i> ₹<span></span></p>
             <p class="card-text seats-text mb-20"><i class="fa-solid fa-users text-teal"></i> <span></span></p>
             <div class="card-actions">
-                </div>
+            </div>
         </div>
     </template>
     <div id="toast-container" class="toast-hidden">
@@ -193,4 +225,5 @@
     </div>
     <script src="js/organizer.js?v=2"></script>
 </body>
+
 </html>

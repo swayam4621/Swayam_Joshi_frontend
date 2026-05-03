@@ -8,10 +8,10 @@ import java.util.List;
 
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, Long> {
-    
-    //For showing a customer all the tickets they have bought
+
+    // For showing a customer all the tickets they have bought
     List<Booking> findByUserEmail(String userEmail);
-    
-    //For showing an organizer all the bookings for their events
+
+    // For showing an organizer all the bookings for their events
     List<Booking> findByEventId(Long eventId);
 }

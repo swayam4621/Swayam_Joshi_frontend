@@ -19,6 +19,7 @@ public class EventService {
         this.eventRepository = eventRepository;
     }
 
+    // Create event method
     public Event createEvent(EventRequest request, String organizerEmail) {
         Event event = new Event();
 
@@ -40,6 +41,7 @@ public class EventService {
         return eventRepository.save(event);
     }
 
+    // Update event service
     public Event updateEvent(Long eventId, EventRequest request, String organizerEmail) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException("Event with ID " + eventId + " could not be found."));
@@ -66,6 +68,7 @@ public class EventService {
         return eventRepository.save(event);
     }
 
+    // Get events in organizer dash with optional filter
     public List<Event> getEventsByOrganizer(String organizerEmail, String filter) {
         LocalDateTime now = LocalDateTime.now();
 
@@ -82,6 +85,7 @@ public class EventService {
         return eventRepository.findByOrganizerEmail(organizerEmail);
     }
 
+    // Get all events in customer view
     public List<Event> getAllEvents(String filter) {
         LocalDateTime now = LocalDateTime.now();
 
@@ -96,15 +100,16 @@ public class EventService {
                     .findByStatusAndEventDateTimeAfterAndArtistNameIsNotNullAndArtistNameNotOrderByEventDateTimeAsc(
                             Event.EventStatus.ACTIVE, now, "");
         }
-        // fallback
         return eventRepository.findAll();
     }
 
+    // Get event by id in both organizer and customer dashbrds
     public Event getEventById(Long eventId) {
         return eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException("Event with ID " + eventId + " could not be found."));
     }
 
+    // Cancel event service
     public Event cancelEvent(Long eventId, String organizerEmail) {
         Event event = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException("Event with ID " + eventId + " could not be found."));
@@ -117,6 +122,7 @@ public class EventService {
         return eventRepository.save(event);
     }
 
+    // Search and filter events in customer dash
     public List<Event> searchAndFilterActiveEvents(String keyword, String category, String timeframe) {
         List<Event> activeEvents = eventRepository.findByStatus(Event.EventStatus.ACTIVE);
 

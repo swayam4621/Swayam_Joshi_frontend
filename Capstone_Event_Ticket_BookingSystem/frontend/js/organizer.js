@@ -12,13 +12,13 @@ document.addEventListener('DOMContentLoaded', () => {
     fetchMyEvents();
     if (localStorage.getItem('showLoginToast') === 'true') {
         showToast("Login Successful! Welcome to your dashboard.");
-        localStorage.removeItem('showLoginToast'); 
+        localStorage.removeItem('showLoginToast');
     }
 
     // Close modals when clicking on backdrop
     const updateModal = document.getElementById('update-modal');
     const detailsModal = document.getElementById('details-modal');
-    
+
     if (updateModal) {
         updateModal.addEventListener('click', (e) => {
             if (e.target === updateModal) {
@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-    
+
     if (detailsModal) {
         detailsModal.addEventListener('click', (e) => {
             if (e.target === detailsModal) {
@@ -36,11 +36,11 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     const now = new Date();
-    now.setMinutes(now.getMinutes() - now.getTimezoneOffset()); 
-    const minDateTime = now.toISOString().slice(0, 16); 
+    now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+    const minDateTime = now.toISOString().slice(0, 16);
     const createDateInput = document.getElementById('event-date');
     const updateDateInput = document.getElementById('update-event-date');
-    
+
     if (createDateInput) createDateInput.min = minDateTime;
     if (updateDateInput) updateDateInput.min = minDateTime;
 });
@@ -50,7 +50,7 @@ function logout() {
     globalThis.location.href = 'index.html';
 }
 
-//Tab switching 
+// Main tab switching 
 function switchMainTab(tabId) {
     const myEventsSection = document.getElementById('my-events-section');
     const createSection = document.getElementById('create-section');
@@ -72,6 +72,7 @@ function switchMainTab(tabId) {
     }
 }
 
+// Sub tab switching for Past, upcoming and cancelled 
 function switchSubTab(subTabName) {
     const grids = ['upcoming-grid', 'past-grid', 'cancelled-grid'];
     const subTabs = ['subtab-upcoming', 'subtab-past', 'subtab-cancelled'];
@@ -114,7 +115,7 @@ async function fetchMyEvents() {
     }
 }
 
-// Render events
+// Render events in the grids
 function renderEvents(events, gridId, sectionTitle) {
     const grid = document.getElementById(gridId);
     const template = document.getElementById('event-card-template');
@@ -165,7 +166,7 @@ function renderEvents(events, gridId, sectionTitle) {
     });
 }
 
-// Create Event Logic
+// Create Event form lissteners ---
 document.getElementById('create-event-form').addEventListener('submit', async function (e) {
     e.preventDefault();
     const eventData = {
@@ -175,14 +176,14 @@ document.getElementById('create-event-form').addEventListener('submit', async fu
         location: document.getElementById('event-location').value,
         price: Number.parseFloat(document.getElementById('event-price').value),
         totalTickets: Number.parseInt(document.getElementById('event-tickets').value),
-        artistName: document.getElementById('event-artist').value, 
+        artistName: document.getElementById('event-artist').value,
         imageUrl: document.getElementById('event-image').value,
-        category: document.getElementById('event-category').value 
+        category: document.getElementById('event-category').value
     };
     if (eventData.title.trim() === '') {
         showToast("Event title cannot be empty.", true);
-        document.getElementById('event-title').focus(); 
-        return; 
+        document.getElementById('event-title').focus();
+        return;
     }
 
     try {
@@ -210,7 +211,7 @@ document.getElementById('create-event-form').addEventListener('submit', async fu
     }
 });
 
-// Update Event Modal Logic 
+// ---- Update Event form listeners --- 
 function openUpdateModal(eventJsonEncoded) {
     const event = JSON.parse(decodeURIComponent(eventJsonEncoded));
     document.getElementById('update-event-id').value = event.id;
@@ -277,7 +278,7 @@ document.getElementById('update-event-form').addEventListener('submit', async fu
     }
 });
 
-//View details of event logic
+//View details of event and attenders table
 async function openDetailsModal(eventJsonEncoded) {
     const event = JSON.parse(decodeURIComponent(eventJsonEncoded));
     document.getElementById('det-title').innerText = event.name;
@@ -307,8 +308,8 @@ async function openDetailsModal(eventJsonEncoded) {
 
         if (response.ok) {
             const bookings = await response.json();
-            currentEventAttendees = bookings; 
-            
+            currentEventAttendees = bookings;
+
             let totalSold = 0;
             let totalRevenue = 0;
             const tbody = document.getElementById('attendee-table-body');
@@ -351,10 +352,9 @@ document.getElementById('download-csv-btn').addEventListener('click', () => {
 
     //create the CSV Headers
     let csvContent = "Customer Email,Tickets Bought,Total Paid (INR),Booking Date,Status\n";
-    
-    //Loop through data and append rows
+
     currentEventAttendees.forEach(b => {
-        const dateStr = new Date(b.bookingDate).toLocaleString().replace(/,/g, ''); 
+        const dateStr = new Date(b.bookingDate).toLocaleString().replace(/,/g, '');
         csvContent += `${b.userEmail},${b.numberOfTickets},${b.totalAmount},${dateStr},${b.status}\n`;
     });
 
@@ -364,7 +364,7 @@ document.getElementById('download-csv-btn').addEventListener('click', () => {
     link.setAttribute("href", url);
     link.setAttribute("download", `attendees_event_${Date.now()}.csv`);
     document.body.appendChild(link);
-    link.click(); 
+    link.click();
     document.body.removeChild(link);
 });
 
@@ -373,7 +373,7 @@ function closeDetailsModal() {
     document.getElementById('details-modal').classList.add('hidden');
 }
 
-//Cancel event logic
+// Cancel event logic
 async function cancelEvent(eventId) {
     if (!confirm("Are you sure? This cannot be undone.")) return;
     try {
@@ -391,16 +391,16 @@ async function cancelEvent(eventId) {
     }
 }
 
-// ---login toast box ---
+// ---Login successful toast box ---
 function showToast(message, isError = false) {
     const toast = document.getElementById('toast-container');
     const msgElement = document.getElementById('toast-message');
-    
+
     if (!toast || !msgElement) return;
 
     const icon = isError ? '<i class="fa-solid fa-circle-exclamation"></i>' : '<i class="fa-solid fa-circle-check"></i>';
     msgElement.innerHTML = `${icon} ${message}`;
-    
+
     if (isError) toast.classList.add('toast-error');
     else toast.classList.remove('toast-error');
 

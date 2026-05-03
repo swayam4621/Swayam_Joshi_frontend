@@ -106,7 +106,7 @@ h1, h2, h3, h4, h5, h6, .section-heading, .section-title, .modal-title-m0, .hero
 .district-grid { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
 .category-grid { grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); }
 
-/* Spacing */
+/* Spacing for elements */
 .hidden { display: none !important; }
 .mb-0 { margin-bottom: 0 !important; }
 .mb-20 { margin-bottom: 20px; }

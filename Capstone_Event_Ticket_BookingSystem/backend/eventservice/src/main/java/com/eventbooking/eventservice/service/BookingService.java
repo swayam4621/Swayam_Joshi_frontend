@@ -27,6 +27,7 @@ public class BookingService {
         this.eventRepository = eventRepository;
     }
 
+    // Booking service function
     @Transactional
     public void processBooking(BookingRequest request, String userEmail) {
         Event event = eventRepository.findById(request.getEventId())
@@ -59,6 +60,7 @@ public class BookingService {
         return bookingRepository.findByUserEmail(email);
     }
 
+    // Cancel booking function having 3 hr check and other checks
     @Transactional
     public void cancelBooking(Long bookingId, String userEmail) {
         Booking booking = bookingRepository.findById(bookingId)
@@ -71,13 +73,14 @@ public class BookingService {
             throw new RuntimeException("Booking is already cancelled.");
         }
         Event event = eventRepository.findById(booking.getEventId())
-            .orElseThrow(() -> new EventNotFoundException("Event not found"));
-        
+                .orElseThrow(() -> new EventNotFoundException("Event not found"));
+
         LocalDateTime cancellationDeadline = event.getEventDateTime().minusHours(3);
         if (LocalDateTime.now().isAfter(cancellationDeadline)) {
-            throw new BookingCancellationDeadlineException("Tickets cannot be cancelled within 3 hours of the event start time.");
+            throw new BookingCancellationDeadlineException(
+                    "Tickets cannot be cancelled within 3 hours of the event start time.");
         }
-        
+
         event.setAvailableSeats(event.getAvailableSeats() + booking.getNumberOfTickets());
         eventRepository.save(event);
         booking.setStatus(Booking.Status.CANCELLED);

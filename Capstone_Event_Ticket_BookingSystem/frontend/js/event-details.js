@@ -134,6 +134,8 @@ function calculateTotal() {
 }
 
 //Handle the fake payment submission
+
+//---- Payment form listeners ----
 document.getElementById('payment-form').addEventListener('submit', async (e) => {
     e.preventDefault();
 
@@ -217,10 +219,10 @@ function updateQuantity(change) {
     let newValue = currentValue + change;
     if (newValue < 1) {
         newValue = 1;
-    } 
+    }
     else if (newValue > currentAvailableSeats) {
         newValue = currentAvailableSeats;
-        
+
         if (typeof showToast === 'function') {
             showToast(`Only ${currentAvailableSeats} seats left!`, true);
         } else {
@@ -230,7 +232,7 @@ function updateQuantity(change) {
 
     if (newValue !== currentValue) {
         input.value = newValue;
-        calculateTotal(); 
+        calculateTotal();
     }
 }
 

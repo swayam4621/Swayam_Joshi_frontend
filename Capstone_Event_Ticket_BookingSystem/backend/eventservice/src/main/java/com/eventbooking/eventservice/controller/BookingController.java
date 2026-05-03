@@ -29,7 +29,8 @@ public class BookingController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"error\": \"" + e.getMessage() + "\"}");
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"error\": \"An unexpected error occurred\"}");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"error\": \"An unexpected error occurred\"}");
         }
     }
 
@@ -39,7 +40,8 @@ public class BookingController {
             List<Booking> attendees = bookingService.getBookingsForEvent(eventId);
             return ResponseEntity.ok(attendees);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"error\": \"Could not fetch attendees\"}");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"error\": \"Could not fetch attendees\"}");
         }
     }
 
@@ -49,7 +51,8 @@ public class BookingController {
             List<Booking> myBookings = bookingService.getMyBookings(principal.getName());
             return ResponseEntity.ok(myBookings);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("{\"error\": \"Could not fetch bookings\"}");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("{\"error\": \"Could not fetch bookings\"}");
         }
     }
 
