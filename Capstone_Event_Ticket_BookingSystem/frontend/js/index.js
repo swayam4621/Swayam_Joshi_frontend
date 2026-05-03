@@ -14,7 +14,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (token && role === 'ORGANIZER') {
         window.location.href = 'organizer-dash.html';
     }
-
+    if (localStorage.getItem('showLoginToast') === 'true') {
+        showToast("Login Successful! Welcome back.");
+        
+        localStorage.removeItem('showLoginToast'); 
+    }
     updateNavbarState();
 
     const loginBtn = document.getElementById('nav-login-btn');
@@ -43,18 +47,23 @@ document.addEventListener('DOMContentLoaded', () => {
                     body: JSON.stringify({ email, password })
                 });
 
-                if (!response.ok) throw new Error("Invalid credentials");
-                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || errorData.message || "Invalid credentials");
+                }
+
                 const data = await response.json();
-                localStorage.setItem('jwtToken', data.token);
+                
+                localStorage.setItem('jwtToken', data.token); 
                 localStorage.setItem('userRole', data.role);
                 localStorage.setItem('userEmail', email);
+
+                localStorage.setItem('showLoginToast', 'true');       
 
                 if (data.role === 'ORGANIZER') {
                     window.location.href = 'organizer-dash.html';
                 } else {
-                    closeAuthModals();
-                    updateNavbarState();
+                    window.location.reload(); 
                 }
             } catch (error) {
                 errorDiv.textContent = error.message;
@@ -116,7 +125,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 successDiv.textContent = "Account created! Please log in.";
                 successDiv.classList.remove('hidden');
                 document.getElementById('signup-form').reset();
-                
+                showToast("Registration Successful! Please log in.");
                 setTimeout(() => {
                     openLoginModal();
                     successDiv.classList.add('hidden');
@@ -157,6 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    //filter button listeners and output
     const filterBtns = document.querySelectorAll('.filter-btn');
     filterBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
@@ -392,7 +402,7 @@ async function fetchPublicEvents(isFilterUpdate = false) {
     }
 }
 
-// --- Carousel Animation Logic ---
+// Carousel working logic
 function goToSlide(index) {
     const carousel = document.getElementById('hero-carousel');
     const dots = document.querySelectorAll('.dot');
@@ -406,7 +416,7 @@ function goToSlide(index) {
     if(dots[currentSlide]) dots[currentSlide].classList.add('active');
 }
 
-// --- Auth Modal Logic ---
+// Auth dialogs opening and closing functions
 function promptLogin() {
     alert("Please log in or sign up to book tickets!");
     openLoginModal();
@@ -425,4 +435,28 @@ function openSignupModal() {
 function closeAuthModals() {
     document.getElementById('login-modal').classList.add('hidden');
     document.getElementById('signup-modal').classList.add('hidden');
+}
+// Toast box function for success and error message
+function showToast(message, isError = false) {
+    const toast = document.getElementById('toast-container');
+    const msgElement = document.getElementById('toast-message');
+    
+    if (!toast || !msgElement) return;
+
+    const icon = isError ? '<i class="fa-solid fa-circle-exclamation"></i>' : '<i class="fa-solid fa-circle-check"></i>';
+    msgElement.innerHTML = `${icon} ${message}`;
+    
+    if (isError) {
+        toast.classList.add('toast-error');
+    } else {
+        toast.classList.remove('toast-error');
+    }
+
+    toast.classList.remove('toast-hidden');
+    toast.classList.add('toast-visible');
+
+    setTimeout(() => {
+        toast.classList.remove('toast-visible');
+        toast.classList.add('toast-hidden');
+    }, 3000);
 }

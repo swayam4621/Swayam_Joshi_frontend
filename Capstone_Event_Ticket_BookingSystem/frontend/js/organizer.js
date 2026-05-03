@@ -10,6 +10,10 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     document.getElementById('user-display-name').innerText = localStorage.getItem('userEmail');
     fetchMyEvents();
+    if (localStorage.getItem('showLoginToast') === 'true') {
+        showToast("Login Successful! Welcome to your dashboard.");
+        localStorage.removeItem('showLoginToast'); 
+    }
 
     // Close modals when clicking on backdrop
     const updateModal = document.getElementById('update-modal');
@@ -175,6 +179,11 @@ document.getElementById('create-event-form').addEventListener('submit', async fu
         imageUrl: document.getElementById('event-image').value,
         category: document.getElementById('event-category').value 
     };
+    if (eventData.title.trim() === '') {
+        showToast("Event title cannot be empty.", true);
+        document.getElementById('event-title').focus(); 
+        return; 
+    }
 
     try {
         const response = await fetch(`${EVENT_API_URL}/create`, {
@@ -380,4 +389,26 @@ async function cancelEvent(eventId) {
         console.error("Error cancelling event:", error);
         alert("Server connection failed.");
     }
+}
+
+// ---login toast box ---
+function showToast(message, isError = false) {
+    const toast = document.getElementById('toast-container');
+    const msgElement = document.getElementById('toast-message');
+    
+    if (!toast || !msgElement) return;
+
+    const icon = isError ? '<i class="fa-solid fa-circle-exclamation"></i>' : '<i class="fa-solid fa-circle-check"></i>';
+    msgElement.innerHTML = `${icon} ${message}`;
+    
+    if (isError) toast.classList.add('toast-error');
+    else toast.classList.remove('toast-error');
+
+    toast.classList.remove('toast-hidden');
+    toast.classList.add('toast-visible');
+
+    setTimeout(() => {
+        toast.classList.remove('toast-visible');
+        toast.classList.add('toast-hidden');
+    }, 3000);
 }

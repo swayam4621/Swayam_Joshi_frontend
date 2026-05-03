@@ -71,7 +71,7 @@ public class BookingService {
             throw new RuntimeException("Booking is already cancelled.");
         }
         Event event = eventRepository.findById(booking.getEventId())
-            .orElseThrow(() -> new RuntimeException("Event not found"));
+            .orElseThrow(() -> new EventNotFoundException("Event not found"));
         
         LocalDateTime cancellationDeadline = event.getEventDateTime().minusHours(3);
         if (LocalDateTime.now().isAfter(cancellationDeadline)) {

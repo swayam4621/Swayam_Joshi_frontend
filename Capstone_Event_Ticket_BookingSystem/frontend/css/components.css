@@ -302,3 +302,88 @@
     transform: scale(0.95);
     transition: opacity 0.4s ease, transform 0.4s ease;
 }
+/*  Toast box style  */
+#toast-container {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background-color: #10b981; /* Success Green */
+    color: white;
+    padding: 16px 24px;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    font-weight: 600;
+    z-index: 9999; /* Ensure it stays on top of modals */
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.4s ease;
+}
+
+.toast-hidden {
+    opacity: 0;
+    transform: translateX(150%); 
+    pointer-events: none;
+}
+
+.toast-visible {
+    opacity: 1;
+    transform: translateX(0); 
+}
+
+.toast-error {
+    background-color: #ef4444 !important;
+}
+/* Plus / Minus Buttons (Dark Theme) */
+.counter-btn {
+    width: 40px;
+    height: 40px;
+    border: 1px solid #3f3f46; 
+    background-color: #18181b; 
+    border-radius: 6px;
+    font-size: 16px;
+    color: #e4e4e7; 
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.counter-btn:hover {
+    background-color: #27272a; 
+    border-color: #52525b;
+}
+
+.counter-btn:active {
+    transform: scale(0.95);
+}
+
+#ticket-quantity {
+    width: 60px;
+    height: 40px;
+    text-align: center;
+    font-size: 16px;
+    font-weight: 600;
+    border: 1px solid #3f3f46; 
+    border-radius: 6px;
+    background-color: #18181b; 
+    color: #ffffff;
+    
+    -moz-appearance: textfield; 
+}
+
+#ticket-quantity::-webkit-outer-spin-button,
+#ticket-quantity::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+.ticket-counter {
+    display: flex !important;
+    flex-direction: row !important; 
+    flex-wrap: nowrap !important;  
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+}

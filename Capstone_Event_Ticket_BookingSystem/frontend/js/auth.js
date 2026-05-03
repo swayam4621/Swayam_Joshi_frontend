@@ -33,7 +33,7 @@ function showMessage(elementId, message) {
     el.classList.remove('hidden');
 }
 
-// --- Registration Logic ---
+// --- Registration listeners ---
 document.getElementById('register-form').addEventListener('submit', async function(e) {
     e.preventDefault();
     clearMessages();
@@ -75,7 +75,7 @@ document.getElementById('register-form').addEventListener('submit', async functi
     }
 });
 
-// --- Login Logic ---
+// --- Login Listeners ---
 document.getElementById('login-form').addEventListener('submit', async function(e) {
     e.preventDefault();
     clearMessages();

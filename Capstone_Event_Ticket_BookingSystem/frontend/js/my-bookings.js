@@ -137,7 +137,7 @@ async function fetchMyBookings() {
                         }
                     });
                 }
-                
+                // QR generator logic 
                 const secureQrData = `EVENT-${data.eventId}-TICKET-${data.id}-${data.userEmail}`;
                 const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(secureQrData)}`;
                 

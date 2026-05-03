@@ -4,6 +4,8 @@ const BOOKING_API_URL = 'http://localhost:8082/api/bookings';
 let currentEventId = null;
 let currentEventPrice = 0;
 let currentEventName = '';
+let currentAvailableSeats = 10;
+let currentEventDetails = null;
 
 document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('jwtToken');
@@ -43,7 +45,7 @@ async function loadEventDetails() {
         }
 
         const event = await response.json();
-
+        currentEventDetails = event;
         currentEventName = event.name;
 
         document.getElementById('detail-title').textContent = event.name;
@@ -101,7 +103,9 @@ function openPaymentModal(eventId, eventName, ticketPrice) {
     currentEventId = eventId;
     currentEventPrice = ticketPrice;
     currentEventName = eventName;
+    currentAvailableSeats = currentEventDetails.availableSeats;
 
+    document.getElementById('ticket-quantity').value = 1;
     document.getElementById('payment-event-name').textContent = eventName;
     document.getElementById('ticket-quantity').value = "1";
     calculateTotal();
@@ -205,6 +209,29 @@ if (paymentModal) {
     paymentModal.addEventListener('click', (e) => {
         if (e.target === paymentModal) closePaymentModal();
     });
+}
+
+function updateQuantity(change) {
+    const input = document.getElementById('ticket-quantity');
+    let currentValue = parseInt(input.value) || 1;
+    let newValue = currentValue + change;
+    if (newValue < 1) {
+        newValue = 1;
+    } 
+    else if (newValue > currentAvailableSeats) {
+        newValue = currentAvailableSeats;
+        
+        if (typeof showToast === 'function') {
+            showToast(`Only ${currentAvailableSeats} seats left!`, true);
+        } else {
+            alert(`Only ${currentAvailableSeats} seats left!`);
+        }
+    }
+
+    if (newValue !== currentValue) {
+        input.value = newValue;
+        calculateTotal(); 
+    }
 }
 
 function showBookingSuccess(eventName) {
