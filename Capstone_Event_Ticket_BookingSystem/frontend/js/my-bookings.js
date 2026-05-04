@@ -1,12 +1,15 @@
 const BOOKING_API_URL = 'http://localhost:8082/api/bookings';
 const EVENT_API_URL = 'http://localhost:8082/api/events';
-let currentStatusTab = 'CONFIRMED';
 let currentSortOrder = 'asc';
+let currentTab= 'UPCOMING';
 
 document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('jwtToken');
     const role = localStorage.getItem('userRole');
 
+    if (token) {
+        setupSessionTimeout(token);
+    }
     if (!token || role !== 'CUSTOMER') {
         globalThis.location.href = 'index.html';
         return;
@@ -21,7 +24,8 @@ document.addEventListener('DOMContentLoaded', () => {
         btn.addEventListener('click', (e) => {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active-filter'));
             e.target.classList.add('active-filter');
-            currentStatusTab = e.target.getAttribute('data-status');
+            
+            currentTab = e.target.getAttribute('data-status'); 
             fetchMyBookings();
         });
     });
@@ -79,7 +83,26 @@ async function fetchMyBookings() {
             }
         }));
 
-        let displayBookings = allMyBookings.filter(b => b.status === currentStatusTab);
+        const now = new Date().getTime();
+
+        let displayBookings = allMyBookings.filter(b => {
+            if (!b.event) return false;
+            
+            const eventTime = new Date(b.event.eventDateTime).getTime();
+            
+            const isEventCancelled = b.event.status === 'CANCELLED_BY_ORGANIZER';
+
+            if (currentTab === 'UPCOMING') {
+                return b.status === 'CONFIRMED' && !isEventCancelled && eventTime >= now; 
+                
+            } else if (currentTab === 'PAST') {
+                return b.status === 'CONFIRMED' && !isEventCancelled && eventTime < now;
+                
+            } else if (currentTab === 'CANCELLED') {
+                return b.status === 'CANCELLED' || isEventCancelled; 
+            }
+            return false;
+        });
 
         displayBookings.sort((a, b) => {
             if (!a.event || !b.event) return 0;
@@ -117,12 +140,28 @@ async function fetchMyBookings() {
             cardElement.querySelector('.booking-price-val').textContent = data.totalAmount.toFixed(2);
 
             const badge = cardElement.querySelector('.booking-status-badge');
-            if (badge) badge.textContent = data.status;
+            const isEventCancelled = data.event.status === 'CANCELLED_BY_ORGANIZER';
+            const isBookingCancelled = data.status === 'CANCELLED';
 
-            if (data.status === 'CANCELLED') {
-                if (badge) badge.classList.add('badge-cancelled');
+            if (isEventCancelled) {
+                if (badge) {
+                    badge.textContent = 'CANCELLED BY ORGANIZER';
+                    badge.classList.add('badge-cancelled');
+                }
                 cardElement.querySelector('.btn-group-row').classList.add('d-none');
+                
+            } else if (isBookingCancelled) {
+                if (badge) {
+                    badge.textContent = 'CANCELLED';
+                    badge.classList.add('badge-cancelled');
+                }
+                cardElement.querySelector('.btn-group-row').classList.add('d-none');
+                
             } else {
+                if (badge) {
+                    badge.textContent = data.status; 
+                }
+
                 const hoursUntilEvent = (new Date(eventDateStr) - new Date()) / (1000 * 60 * 60);
                 const cancelBtn = cardElement.querySelector('.btn-cancel-booking');
 
@@ -138,6 +177,7 @@ async function fetchMyBookings() {
                         }
                     });
                 }
+                
                 // QR generator logic 
                 const secureQrData = `EVENT-${data.eventId}-TICKET-${data.id}-${data.userEmail}`;
                 const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=${encodeURIComponent(secureQrData)}`;
@@ -147,7 +187,6 @@ async function fetchMyBookings() {
                     openQrModal(eventName, eventDate, data.id, data.numberOfTickets, qrUrl);
                 });
             }
-
             grid.appendChild(cardElement);
         }
 
@@ -203,4 +242,31 @@ async function cancelBooking(bookingId, cardElement) {
         cancelBtn.disabled = false;
         cancelBtn.textContent = 'Cancel';
     }
+}
+
+// Session timeout
+function setupSessionTimeout(token) {
+    if (!token) return;
+
+    try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const expirationTime = payload.exp * 1000; 
+        const currentTime = Date.now();
+        const timeRemaining = expirationTime - currentTime;
+
+        if (timeRemaining <= 0) {
+            handleSessionExpiry();
+        } else {
+            setTimeout(handleSessionExpiry, timeRemaining);
+        }
+    } catch (e) {
+        console.error("Invalid token format", e);
+        handleSessionExpiry();
+    }
+}
+
+function handleSessionExpiry() {
+    localStorage.clear();
+    alert("Your session has expired for security reasons. Please log in again.");
+    window.location.href = 'index.html'; 
 }

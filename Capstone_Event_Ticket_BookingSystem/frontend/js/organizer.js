@@ -8,6 +8,9 @@ document.addEventListener('DOMContentLoaded', () => {
         globalThis.location.href = 'index.html';
         return;
     }
+    if (token) {
+        setupSessionTimeout(token);
+    }
     document.getElementById('user-display-name').innerText = localStorage.getItem('userEmail');
     fetchMyEvents();
     if (localStorage.getItem('showLoginToast') === 'true') {
@@ -150,10 +153,22 @@ function renderEvents(events, gridId, sectionTitle) {
             const btnGroup = document.createElement('div');
             btnGroup.className = 'btn-group-row';
 
-            btnGroup.innerHTML = `
-                <button onclick="openUpdateModal('${eventJson}')" class="btn-edit">Edit</button>
-                <button onclick="cancelEvent(${event.id})" class="btn-cancel">Cancel</button>
-            `;
+            // NEW: Calculate hours until event starts
+            const now = new Date().getTime();
+            const eventTime = new Date(event.eventDateTime).getTime();
+            const hoursUntilEvent = (eventTime - now) / (1000 * 60 * 60);
+
+            if (hoursUntilEvent < 4) {
+                btnGroup.innerHTML = `
+                    <button class="btn-edit btn-locked" disabled title="Cannot modify within 4 hours of start time" style="cursor: not-allowed; opacity: 0.6;">Locked</button>
+                    <button onclick="cancelEvent(${event.id})" class="btn-cancel">Cancel</button>
+                `;
+            } else {
+                btnGroup.innerHTML = `
+                    <button onclick="openUpdateModal('${eventJson}')" class="btn-edit">Edit</button>
+                    <button onclick="cancelEvent(${event.id})" class="btn-cancel">Cancel</button>
+                `;
+            }
             actionsContainer.appendChild(btnGroup);
         } else if (sectionTitle === 'Past') {
             const completedBadge = document.createElement('span');
@@ -214,11 +229,16 @@ document.getElementById('create-event-form').addEventListener('submit', async fu
 // ---- Update Event form listeners --- 
 function openUpdateModal(eventJsonEncoded) {
     const event = JSON.parse(decodeURIComponent(eventJsonEncoded));
+    const dateObj = new Date(event.eventDateTime);
+    const tzOffset = dateObj.getTimezoneOffset() * 60000; 
+    const localISOTime = (new Date(dateObj - tzOffset)).toISOString().slice(0, 16);
+
+// Set the input field
     document.getElementById('update-event-id').value = event.id;
     document.getElementById('upd-title').value = event.name;
     document.getElementById('upd-desc').value = event.description;
     document.getElementById('upd-tickets').value = event.totalSeats;
-    document.getElementById('upd-date').value = new Date(event.eventDateTime).toISOString().slice(0, 16);
+    document.getElementById('upd-date').value = localISOTime;
     document.getElementById('upd-location').value = event.venue;
     document.getElementById('upd-price').value = event.ticketPrice;
     document.getElementById('upd-image').value = event.imageUrl || '';
@@ -411,4 +431,31 @@ function showToast(message, isError = false) {
         toast.classList.remove('toast-visible');
         toast.classList.add('toast-hidden');
     }, 3000);
+}
+
+// Session timeout
+function setupSessionTimeout(token) {
+    if (!token) return;
+
+    try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const expirationTime = payload.exp * 1000; 
+        const currentTime = Date.now();
+        const timeRemaining = expirationTime - currentTime;
+
+        if (timeRemaining <= 0) {
+            handleSessionExpiry();
+        } else {
+            setTimeout(handleSessionExpiry, timeRemaining);
+        }
+    } catch (e) {
+        console.error("Invalid token format", e);
+        handleSessionExpiry();
+    }
+}
+
+function handleSessionExpiry() {
+    localStorage.clear();
+    alert("Your session has expired for security reasons. Please log in again.");
+    window.location.href = 'index.html'; 
 }

@@ -12,6 +12,8 @@ import com.eventbooking.eventservice.exception.BookingCancellationDeadlineExcept
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,6 +23,7 @@ public class BookingService {
 
     private final BookingRepository bookingRepository;
     private final EventRepository eventRepository;
+    private static final Logger logger = LoggerFactory.getLogger(BookingService.class);
 
     public BookingService(BookingRepository bookingRepository, EventRepository eventRepository) {
         this.bookingRepository = bookingRepository;
@@ -50,6 +53,8 @@ public class BookingService {
         booking.setBookingDate(LocalDateTime.now());
 
         bookingRepository.save(booking);
+        logger.info("Booking Processed Successfully: BookingID={}, EventID={}, UserEmail={}, Tickets={}", 
+                    booking.getId(), request.getEventId(), userEmail, request.getNumberOfTickets());
     }
 
     public List<Booking> getBookingsForEvent(Long eventId) {
@@ -85,5 +90,8 @@ public class BookingService {
         eventRepository.save(event);
         booking.setStatus(Booking.Status.CANCELLED);
         bookingRepository.save(booking);
+
+        logger.info("Booking Cancelled Successfully: BookingID={}, EventID={}, UserEmail={}, Tickets={}", 
+                    booking.getId(), booking.getEventId(), userEmail, booking.getNumberOfTickets());
     }
 }

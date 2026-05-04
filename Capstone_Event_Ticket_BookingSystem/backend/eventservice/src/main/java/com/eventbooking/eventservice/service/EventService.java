@@ -5,15 +5,20 @@ import com.eventbooking.eventservice.entity.Event;
 import com.eventbooking.eventservice.exception.EventNotFoundException;
 import com.eventbooking.eventservice.exception.UnauthorizedAccessException;
 import com.eventbooking.eventservice.exception.PastEventCreationException;
+import com.eventbooking.eventservice.exception.EventUpdateDeadlineException;
 import com.eventbooking.eventservice.repository.EventRepository;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit; // For calculating hour difference
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class EventService {
 
     private final EventRepository eventRepository;
+    private static final Logger logger = LoggerFactory.getLogger(EventService.class);
 
     public EventService(EventRepository eventRepository) {
         this.eventRepository = eventRepository;
@@ -38,7 +43,10 @@ public class EventService {
         event.setCategory(request.getCategory());
         event.setOrganizerEmail(organizerEmail);
 
-        return eventRepository.save(event);
+        Event savedEvent = eventRepository.save(event);
+        logger.info("Event Created Successfully: ID={}, Title='{}', Organizer={}", 
+                    savedEvent.getId(), savedEvent.getName(), organizerEmail);
+        return savedEvent;
     }
 
     // Update event service
@@ -54,6 +62,11 @@ public class EventService {
         if (!organizerEmail.equals(event.getOrganizerEmail())) {
             throw new UnauthorizedAccessException("Not authorized to update this event.");
         }
+        
+        long hoursUntilEvent = ChronoUnit.HOURS.between(LocalDateTime.now(), event.getEventDateTime());
+        if (hoursUntilEvent < 4) {
+            throw new EventUpdateDeadlineException("Events cannot be modified within 4 hours of the start time.");
+        }
 
         event.setName(request.getTitle());
         event.setDescription(request.getDescription());
@@ -65,7 +78,10 @@ public class EventService {
         event.setImageUrl(request.getImageUrl());
         event.setArtistName(request.getArtistName());
 
-        return eventRepository.save(event);
+        Event updatedEvent = eventRepository.save(event);
+        logger.info("Event Updated Successfully: ID={}, Title='{}', Organizer={}", 
+                    updatedEvent.getId(), updatedEvent.getName(), organizerEmail);
+        return updatedEvent;
     }
 
     // Get events in organizer dash with optional filter
@@ -119,7 +135,10 @@ public class EventService {
         }
 
         event.setStatus(Event.EventStatus.CANCELLED_BY_ORGANIZER);
-        return eventRepository.save(event);
+        Event cancelledEvent = eventRepository.save(event);
+        logger.info("Event Cancelled Successfully: ID={}, Title='{}', Organizer={}", 
+                    cancelledEvent.getId(), cancelledEvent.getName(), organizerEmail);
+        return cancelledEvent;
     }
 
     // Search and filter events in customer dash

@@ -10,6 +10,10 @@ let currentCategory = 'All';
 document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('jwtToken');
     const role = localStorage.getItem('userRole');
+    
+    if (token) {
+        setupSessionTimeout(token);
+    }
 
     if (token && role === 'ORGANIZER') {
         window.location.href = 'organizer-dash.html';
@@ -33,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const loginForm = document.getElementById('login-form');
     const signupForm = document.getElementById('signup-form');
 
+    // Login form submit button listener 
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -72,6 +77,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Signup form submit button listner and register validations on frontend 
     if (signupForm) {
         signupForm.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -461,4 +467,31 @@ function showToast(message, isError = false) {
         toast.classList.remove('toast-visible');
         toast.classList.add('toast-hidden');
     }, 3000);
+}
+
+// Session timeout
+function setupSessionTimeout(token) {
+    if (!token) return;
+
+    try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const expirationTime = payload.exp * 1000; 
+        const currentTime = Date.now();
+        const timeRemaining = expirationTime - currentTime;
+
+        if (timeRemaining <= 0) {
+            handleSessionExpiry();
+        } else {
+            setTimeout(handleSessionExpiry, timeRemaining);
+        }
+    } catch (e) {
+        console.error("Invalid token format", e);
+        handleSessionExpiry();
+    }
+}
+
+function handleSessionExpiry() {
+    localStorage.clear();
+    alert("Your session has expired for security reasons. Please log in again.");
+    window.location.href = 'index.html'; 
 }

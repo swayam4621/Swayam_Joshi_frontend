@@ -13,6 +13,9 @@ document.addEventListener('DOMContentLoaded', () => {
         globalThis.location.href = 'index.html';
         return;
     }
+    if (token) {
+        setupSessionTimeout(token);
+    }
 
     loadEventDetails();
 });
@@ -260,4 +263,31 @@ function closeSuccessModal() {
 function logout() {
     localStorage.clear();
     globalThis.location.href = 'index.html';
+}
+
+// Session timeout
+function setupSessionTimeout(token) {
+    if (!token) return;
+
+    try {
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const expirationTime = payload.exp * 1000; 
+        const currentTime = Date.now();
+        const timeRemaining = expirationTime - currentTime;
+
+        if (timeRemaining <= 0) {
+            handleSessionExpiry();
+        } else {
+            setTimeout(handleSessionExpiry, timeRemaining);
+        }
+    } catch (e) {
+        console.error("Invalid token format", e);
+        handleSessionExpiry();
+    }
+}
+
+function handleSessionExpiry() {
+    localStorage.clear();
+    alert("Your session has expired for security reasons. Please log in again.");
+    window.location.href = 'index.html'; 
 }

@@ -56,7 +56,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                 }
             }
-        } catch (Exception e) {
+        } catch (io.jsonwebtoken.ExpiredJwtException e) {
+            logger.warn("JWT Token has expired.");
+            response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            response.setContentType("application/json");
+            response.getWriter().write("{\"error\": \"Session expired. Please log in again.\"}");
+            return;
+        }
+         catch (Exception e) {
             logger.error("User Service Token validation failed: {}", e.getMessage());
         }
 
