@@ -12,6 +12,7 @@
 </head>
 
 <body>
+    <!-- Navbar -->
     <nav class="navbar sticky-nav">
         <div class="logo">EvenTix</div>
 
@@ -28,13 +29,14 @@
         </div>
     </nav>
 
+    <!-- Top moving event carousel -->
     <section class="hero-carousel-container">
         <div id="hero-carousel" class="hero-carousel"></div>
         <div id="carousel-dots" class="carousel-dots"></div>
     </section>
 
+    <!-- Main pg content -->
     <main class="customer-main-container pt-20">
-
         <div class="search-bar mt-20 mb-30">
             <input type="text" id="search-input" placeholder="Search events by name or venue...">
             <button class="search-btn" id="search-trigger-btn">
@@ -42,9 +44,11 @@
             </button>
         </div>
 
+        <!-- Artists near you icons-->
         <h3 id="artists-heading" class="section-heading mt-30">Artists near you</h3>
         <div id="dynamic-artists-container" class="scroll-container artist-scroll"></div>
 
+        <!-- All events filter buttons today,tmrw,weekend etc -->
         <h3 class="section-heading mt-30">All events</h3>
         <div class="scroll-container filter-scroll mb-20">
             <button class="filter-btn active-filter" data-type="timeframe" data-value="All">All</button>
@@ -65,6 +69,7 @@
         </div>
     </main>
 
+    <!-- Event card template -->
     <template id="public-event-card-template">
         <div class="district-card">
             <img class="card-img" src="https://images.unsplash.com/photo-1540039155732-6847350357a0?w=600"
@@ -79,6 +84,7 @@
         </div>
     </template>
 
+    <!-- Carousel slide template -->
     <template id="hero-slide-template">
         <div class="hero-slide">
             <div class="slide-overlay">
@@ -88,6 +94,7 @@
         </div>
     </template>
 
+    <!-- Artist item template -->
     <template id="artist-item-template">
         <div class="artist-item">
             <img class="artist-img" src="" alt="">
@@ -95,6 +102,7 @@
         </div>
     </template>
 
+    <!-- Login form-->
     <div id="login-modal" class="modal-backdrop hidden">
         <div class="auth-wrapper relative modal-box">
             <button class="close-modal-btn" onclick="closeAuthModals()">✕</button>
@@ -119,6 +127,7 @@
         </div>
     </div>
 
+    <!-- Signup form  -->
     <div id="signup-modal" class="modal-backdrop hidden">
         <div class="auth-wrapper relative modal-box">
             <button class="close-modal-btn" onclick="closeAuthModals()">✕</button>
@@ -132,7 +141,7 @@
                     </div>
                     <div class="input-group">
                         <label>Phone Number</label>
-                        <input type="tel" id="signup-phone" placeholder="Must be 10 digits" required>
+                        <input type="tel" id="signup-phone" placeholder="Must be 10 digits" maxlength="10" required>
                     </div>
                     <div class="input-group">
                         <label>Email</label>
@@ -141,7 +150,7 @@
                     <div class="input-group">
                         <label>Password</label>
                         <input type="password" id="signup-password"
-                            placeholder="Atleast 8 characters, one uppercase and a special character" required>
+                            placeholder="Atleast 8 characters, one uppercase and a special character" maxlength="12" required>
                     </div>
                     <div class="input-group">
                         <label>I am a...</label>
@@ -159,6 +168,8 @@
             </div>
         </div>
     </div>
+
+    <!-- Login successful toast container -->
     <div id="toast-container" class="toast-hidden">
         <div id="toast-message"></div>
     </div>

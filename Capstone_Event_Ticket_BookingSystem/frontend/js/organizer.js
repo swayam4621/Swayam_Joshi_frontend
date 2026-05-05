@@ -1,6 +1,6 @@
 const EVENT_API_URL = 'http://localhost:8082/api/events';
 let currentSubTab = 'upcoming';
-let currentEventAttendees = []; //To hold data for the csv file
+let currentEventAttendees = [];
 
 document.addEventListener('DOMContentLoaded', () => {
     const token = localStorage.getItem('jwtToken');
@@ -13,10 +13,24 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     document.getElementById('user-display-name').innerText = localStorage.getItem('userEmail');
     fetchMyEvents();
+    
     if (localStorage.getItem('showLoginToast') === 'true') {
         showToast("Login Successful! Welcome to your dashboard.");
         localStorage.removeItem('showLoginToast');
     }
+
+    document.getElementById('logout-btn').addEventListener('click', logout);
+
+    document.querySelectorAll('.main-tab-trigger').forEach(btn => {
+        btn.addEventListener('click', (e) => switchMainTab(e.target.getAttribute('data-target')));
+    });
+
+    document.querySelectorAll('.subtab-trigger').forEach(btn => {
+        btn.addEventListener('click', (e) => switchSubTab(e.target.getAttribute('data-subtab')));
+    });
+
+    document.getElementById('close-update-modal').addEventListener('click', closeUpdateModal);
+    document.getElementById('close-details-modal').addEventListener('click', closeDetailsModal);
 
     // Close modals when clicking on backdrop
     const updateModal = document.getElementById('update-modal');
@@ -24,17 +38,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (updateModal) {
         updateModal.addEventListener('click', (e) => {
-            if (e.target === updateModal) {
-                closeUpdateModal();
-            }
+            if (e.target === updateModal) closeUpdateModal();
         });
     }
 
     if (detailsModal) {
         detailsModal.addEventListener('click', (e) => {
-            if (e.target === detailsModal) {
-                closeDetailsModal();
-            }
+            if (e.target === detailsModal) closeDetailsModal();
         });
     }
 
@@ -146,30 +156,39 @@ function renderEvents(events, gridId, sectionTitle) {
         const viewBtn = document.createElement('button');
         viewBtn.className = 'btn primary-btn btn-view-details';
         viewBtn.textContent = 'View Details';
-        viewBtn.onclick = () => openDetailsModal(eventJson);
+        viewBtn.addEventListener('click', () => openDetailsModal(eventJson));
         actionsContainer.appendChild(viewBtn);
 
         if (sectionTitle === 'Upcoming') {
             const btnGroup = document.createElement('div');
             btnGroup.className = 'btn-group-row';
 
-            // NEW: Calculate hours until event starts
+            const editBtn = document.createElement('button');
+            editBtn.className = 'btn-edit';
+            editBtn.textContent = 'Edit';
+            
+            const cancelBtn = document.createElement('button');
+            cancelBtn.className = 'btn-cancel';
+            cancelBtn.textContent = 'Cancel';
+            cancelBtn.addEventListener('click', () => cancelEvent(event.id));
+
             const now = new Date().getTime();
             const eventTime = new Date(event.eventDateTime).getTime();
             const hoursUntilEvent = (eventTime - now) / (1000 * 60 * 60);
 
             if (hoursUntilEvent < 4) {
-                btnGroup.innerHTML = `
-                    <button class="btn-edit btn-locked" disabled title="Cannot modify within 4 hours of start time" style="cursor: not-allowed; opacity: 0.6;">Locked</button>
-                    <button onclick="cancelEvent(${event.id})" class="btn-cancel">Cancel</button>
-                `;
+                editBtn.disabled = true;
+                editBtn.classList.add('btn-locked');
+                editBtn.textContent = 'Locked';
+                editBtn.title = "Cannot modify within 4 hours of start time";
             } else {
-                btnGroup.innerHTML = `
-                    <button onclick="openUpdateModal('${eventJson}')" class="btn-edit">Edit</button>
-                    <button onclick="cancelEvent(${event.id})" class="btn-cancel">Cancel</button>
-                `;
+                editBtn.addEventListener('click', () => openUpdateModal(eventJson));
             }
+
+            btnGroup.appendChild(editBtn);
+            btnGroup.appendChild(cancelBtn);
             actionsContainer.appendChild(btnGroup);
+
         } else if (sectionTitle === 'Past') {
             const completedBadge = document.createElement('span');
             completedBadge.className = 'badge badge-completed-full';
@@ -181,7 +200,7 @@ function renderEvents(events, gridId, sectionTitle) {
     });
 }
 
-// Create Event form lissteners ---
+// Create Event form listeners ---
 document.getElementById('create-event-form').addEventListener('submit', async function (e) {
     e.preventDefault();
     const eventData = {
@@ -195,6 +214,7 @@ document.getElementById('create-event-form').addEventListener('submit', async fu
         imageUrl: document.getElementById('event-image').value,
         category: document.getElementById('event-category').value
     };
+
     if (eventData.title.trim() === '') {
         showToast("Event title cannot be empty.", true);
         document.getElementById('event-title').focus();
@@ -233,7 +253,6 @@ function openUpdateModal(eventJsonEncoded) {
     const tzOffset = dateObj.getTimezoneOffset() * 60000; 
     const localISOTime = (new Date(dateObj - tzOffset)).toISOString().slice(0, 16);
 
-// Set the input field
     document.getElementById('update-event-id').value = event.id;
     document.getElementById('upd-title').value = event.name;
     document.getElementById('upd-desc').value = event.description;
@@ -243,8 +262,9 @@ function openUpdateModal(eventJsonEncoded) {
     document.getElementById('upd-price').value = event.ticketPrice;
     document.getElementById('upd-image').value = event.imageUrl || '';
     document.getElementById('upd-artist').value = event.artistName || '';
-    document.getElementById('update-modal').classList.remove('hidden');
     document.getElementById('update-event-category').value = event.category || 'Other';
+    
+    document.getElementById('update-modal').classList.remove('hidden');
 }
 
 function closeUpdateModal() {
@@ -317,7 +337,7 @@ async function openDetailsModal(eventJsonEncoded) {
     document.getElementById('det-revenue').innerText = '...';
     document.getElementById('attendee-table-body').innerHTML = '';
     document.getElementById('no-attendees-msg').classList.add('hidden');
-    currentEventAttendees = []; // Clear previous data
+    currentEventAttendees = []; 
 
     document.getElementById('details-modal').classList.remove('hidden');
     try {
@@ -343,14 +363,27 @@ async function openDetailsModal(eventJsonEncoded) {
                     //Calculate totals
                     totalSold += b.numberOfTickets;
                     totalRevenue += b.totalAmount;
-                    //add to attendee table
+                    
                     const tr = document.createElement('tr');
-                    tr.innerHTML = `
-                        <td style="padding: 10px; border-bottom: 1px solid #2a2a2a; color: #fff;">${b.userEmail}</td>
-                        <td style="padding: 10px; border-bottom: 1px solid #2a2a2a; color: #fff;">${b.numberOfTickets}</td>
-                        <td style="padding: 10px; border-bottom: 1px solid #2a2a2a; color: #fff;">₹${b.totalAmount.toFixed(2)}</td>
-                        <td style="padding: 10px; border-bottom: 1px solid #2a2a2a; color: #888;">${new Date(b.bookingDate).toLocaleDateString()}</td>
-                    `;
+                    
+                    const tdEmail = document.createElement('td');
+                    tdEmail.textContent = b.userEmail;
+                    
+                    const tdTickets = document.createElement('td');
+                    tdTickets.textContent = b.numberOfTickets;
+                    
+                    const tdAmount = document.createElement('td');
+                    tdAmount.textContent = `₹${b.totalAmount.toFixed(2)}`;
+                    
+                    const tdDate = document.createElement('td');
+                    tdDate.className = 'date-col';
+                    tdDate.textContent = new Date(b.bookingDate).toLocaleDateString();
+                    
+                    tr.appendChild(tdEmail);
+                    tr.appendChild(tdTickets);
+                    tr.appendChild(tdAmount);
+                    tr.appendChild(tdDate);
+                    
                     tbody.appendChild(tr);
                 });
 
@@ -370,7 +403,6 @@ document.getElementById('download-csv-btn').addEventListener('click', () => {
         return;
     }
 
-    //create the CSV Headers
     let csvContent = "Customer Email,Tickets Bought,Total Paid (INR),Booking Date,Status\n";
 
     currentEventAttendees.forEach(b => {
@@ -387,7 +419,6 @@ document.getElementById('download-csv-btn').addEventListener('click', () => {
     link.click();
     document.body.removeChild(link);
 });
-
 
 function closeDetailsModal() {
     document.getElementById('details-modal').classList.add('hidden');
@@ -456,6 +487,6 @@ function setupSessionTimeout(token) {
 
 function handleSessionExpiry() {
     localStorage.clear();
-    alert("Your session has expired for security reasons. Please log in again.");
+    alert("Your session has expired. Please log in again.");
     window.location.href = 'index.html'; 
 }

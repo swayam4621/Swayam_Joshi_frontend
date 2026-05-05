@@ -387,3 +387,86 @@
     gap: 8px;
     margin-top: 8px;
 }
+/* Organizer-dash styling --- */
+.subtabs-wrapper {
+    border-bottom: 1px solid var(--border-color); 
+    margin-bottom: 20px;
+}
+
+.analytics-container {
+    margin-top: 25px; 
+    padding-top: 20px; 
+    border-top: 1px solid #333;
+}
+
+.analytics-header {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    margin-bottom: 15px;
+}
+
+.analytics-header h3 {
+    margin: 0; 
+    font-size: 1.2rem;
+}
+
+.btn-download {
+    padding: 6px 12px; 
+    font-size: 0.85rem; 
+    border-radius: 4px;
+}
+
+.analytics-summary {
+    margin-bottom: 15px; 
+    background: #121212; 
+    padding: 10px; 
+    border-radius: 6px;
+}
+
+.table-wrapper {
+    max-height: 200px; 
+    overflow-y: auto; 
+    border: 1px solid #333; 
+    border-radius: 6px;
+}
+
+.attendee-table {
+    width: 100%; 
+    text-align: left; 
+    border-collapse: collapse; 
+    font-size: 0.9rem;
+}
+
+.attendee-table thead {
+    background: #1e1e1e; 
+    position: sticky; 
+    top: 0;
+}
+
+.attendee-table th {
+    padding: 10px; 
+    border-bottom: 1px solid #333; 
+    color: #888;
+}
+
+.attendee-table td {
+    padding: 10px; 
+    border-bottom: 1px solid #2a2a2a; 
+    color: #fff;
+}
+
+.attendee-table td.date-col {
+    color: #888;
+}
+
+.empty-table-msg {
+    text-align: center; 
+    padding: 15px; 
+    color: #888; 
+    margin: 0;
+}
+.btn-locked[disabled] {
+    cursor: not-allowed;
+    opacity: 0.6;
+}

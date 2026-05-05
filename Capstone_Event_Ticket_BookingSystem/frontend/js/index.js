@@ -227,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// --- State Management ---
+// --- Navbar state display logic ---
 function updateNavbarState() {
     const token = localStorage.getItem('jwtToken');
     const role = localStorage.getItem('userRole');
